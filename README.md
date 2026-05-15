@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kalkulations-Quiz
 
-## Getting Started
+Web-Quiz für den Management-Kongress der Kalkulations- und Steuerabteilung. Der Moderator führt 1–4 Spieler durch Multiple-Choice-Fragen (3 Antworten), Spieler scannen pro Frage einen QR-Code auf dem Beamer-Slide und antworten auf dem Handy. Auf dem Beamer läuft live ein spoilerfreier Eingangs-Counter, nach Auflösung wird die Antwortverteilung sichtbar.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Next.js 15 (App Router) + TypeScript + Tailwind
+- Supabase (Postgres + Realtime) als Daten- und Live-Layer
+- Admin-Login per Passwort (HMAC-Cookie)
+- Deploy: Vercel
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Supabase-Projekt anlegen** (https://supabase.com → New project).
+2. SQL aus `supabase/migrations/0001_init.sql` im Supabase SQL-Editor ausführen. Optional `supabase/seed.sql` für Demo-Daten.
+3. `.env.local` anlegen (Kopiervorlage in `.env.local.example`):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=...
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+   SUPABASE_SERVICE_ROLE_KEY=...
+   ADMIN_PASSWORD=...
+   ADMIN_SESSION_SECRET=$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
+   ```
 
-## Learn More
+4. **Realtime aktivieren** (Supabase Dashboard → Database → Replication → `votes` Tabelle aktivieren). Die Migration setzt das bereits per `alter publication`.
 
-To learn more about Next.js, take a look at the following resources:
+5. Dev-Server:
+   ```bash
+   npm run dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## User-Flows
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Wer            | Route                  | Was                                                                   |
+|----------------|------------------------|-----------------------------------------------------------------------|
+| Admin          | `/admin`               | Login, Spiele und Fragen anlegen, QR-Codes herunterladen              |
+| Moderator      | `/present/[gameId]`    | Vollbild-Beamer-Ansicht, Tastatur: ←/→ Frage wechseln, Space auflösen |
+| Spieler (Phone)| `/play/[slug]`         | QR-Ziel — Frage + 3 Buttons, Sofort-Feedback richtig/falsch           |
 
-## Deploy on Vercel
+## Bedienung Beamer
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `←` / `→` oder `PageUp` / `PageDown`: Frage wechseln
+- `Space` oder `Enter`: Auflösen (zeigt Verteilung + korrekte Antwort)
+- Live-Counter "Antworten eingegangen: N" während Frage offen, **kein Spoiler** der Verteilung
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Vercel Deploy
+
+- Env-Vars im Vercel-Dashboard setzen (alle aus `.env.local.example`)
+- Standard Next.js Build, kein zusätzlicher Setup
+
+## Architektur-Notizen
+
+- Alle Schreibzugriffe laufen serverseitig mit Service-Role-Key (RLS umgangen, bewusst)
+- Nur Realtime-Subscriptions nutzen den Anon-Key im Browser
+- Mehrfach-Voting bewusst erlaubt (kein Cookie-Schutz im MVP)
+- Fallback-Polling alle 2 s zusätzlich zu Realtime, falls WebSocket-Verbindung droppt

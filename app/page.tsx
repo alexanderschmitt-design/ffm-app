@@ -14,19 +14,19 @@ export default function Home() {
           <div className="mx-auto grid max-w-6xl items-center gap-16 md:grid-cols-2">
             <div>
               <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-                Kalkulations- und Steuerabteilung
+                Güntner · FFM 2026 · Marktstand
               </p>
               <h1 className="headline mt-4 text-4xl leading-[1.15] md:text-5xl">
                 Trockene Zahlen,<br />live geraten.
               </h1>
               <span className="headline-accent" />
               <p className="mt-8 max-w-md text-base leading-relaxed text-ink-muted">
-                Dieses Live-Quiz läuft im Kongress-Setup mit dem Moderator. Spieler scannen
-                den QR-Code auf dem aktuellen Slide und beantworten die Frage direkt
-                auf ihrem Handy.
+                Am Güntner-Stand auf der FFM 2026: Scann den QR-Code, beantworte die Frage
+                auf deinem Handy — und komm mit uns ins Gespräch über Kalkulation und
+                Steuern bei Güntner.
               </p>
               <p className="mt-4 text-sm text-ink-muted">
-                Du hast keinen QR-Code, sondern willst Fragen verwalten?
+                Du betreust den Stand und willst Fragen verwalten?
               </p>
               <Link
                 href="/admin"
@@ -51,7 +51,7 @@ export default function Home() {
         </section>
       </main>
       <footer className="bg-surface-muted px-8 py-6 text-center text-xs text-ink-muted">
-        © Güntner · Internes Quiz-Tool
+        © Güntner · Marktstand-Quiz · FFM 2026
       </footer>
     </>
   );

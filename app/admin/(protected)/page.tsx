@@ -36,7 +36,7 @@ export default async function AdminGamesList() {
           <input
             name="name"
             required
-            placeholder="z.B. Kongress 2026"
+            placeholder="z.B. FFM 2026 · Marktstand"
             className="flex-1 border border-slate-300 px-3 py-2.5 outline-none focus:border-brand"
           />
           <button
@@ -74,7 +74,7 @@ export default async function AdminGamesList() {
                     target="_blank"
                     className="border border-slate-300 px-4 py-2 text-ink hover:border-brand hover:text-brand"
                   >
-                    Beamer öffnen ↗
+                    Stand-Display öffnen ↗
                   </Link>
                   <Link
                     href={`/admin/games/${g.id}`}

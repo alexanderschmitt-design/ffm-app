@@ -73,8 +73,65 @@ async function addQuestion(formData: FormData) {
   revalidatePath(`/admin/games/${gameId}`);
 }
 
+async function updateQuestion(formData: FormData) {
+  "use server";
+  const questionId = String(formData.get("questionId") ?? "");
+  const gameId = String(formData.get("gameId") ?? "");
+  const prompt = String(formData.get("prompt") ?? "").trim();
+  const correctIndex = Number(formData.get("correct"));
+  const labels = [0, 1, 2].map((i) =>
+    String(formData.get(`option_${i}`) ?? "").trim(),
+  );
+  if (
+    !questionId ||
+    !gameId ||
+    !prompt ||
+    labels.some((l) => !l) ||
+    ![0, 1, 2].includes(correctIndex)
+  ) {
+    return;
+  }
+
+  const sb = supabaseAdmin();
+
+  const { error: qErr } = await sb
+    .from("questions")
+    .update({ prompt })
+    .eq("id", questionId);
+  if (qErr) throw new Error(qErr.message);
+
+  const { data: existingOptions, error: fetchErr } = await sb
+    .from("answer_options")
+    .select("id, position")
+    .eq("question_id", questionId)
+    .order("position", { ascending: true });
+  if (fetchErr) throw new Error(fetchErr.message);
+  if (!existingOptions || existingOptions.length !== 3) {
+    throw new Error("Antwort-Optionen für diese Frage sind in einem inkonsistenten Zustand.");
+  }
+
+  for (const opt of existingOptions) {
+    const i = opt.position as number;
+    const { error: uErr } = await sb
+      .from("answer_options")
+      .update({
+        label: labels[i],
+        is_correct: i === correctIndex,
+      })
+      .eq("id", opt.id);
+    if (uErr) throw new Error(uErr.message);
+  }
+
+  revalidatePath(`/admin/games/${gameId}`);
+  redirect(`/admin/games/${gameId}`);
+}
+
 export default async function AdminGameEditor(props: PageProps<"/admin/games/[id]">) {
   const { id } = await props.params;
+  const searchParams = await props.searchParams;
+  const editingId =
+    typeof searchParams?.edit === "string" ? searchParams.edit : null;
+
   const sb = supabaseAdmin();
 
   const [{ data: game }, { data: questions }] = await Promise.all([
@@ -129,7 +186,7 @@ export default async function AdminGameEditor(props: PageProps<"/admin/games/[id
             target="_blank"
             className="bg-brand px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-dark"
           >
-            Beamer öffnen ↗
+            Stand-Display öffnen ↗
           </Link>
           <form action={deleteGame}>
             <input type="hidden" name="gameId" value={g.id} />
@@ -147,49 +204,127 @@ export default async function AdminGameEditor(props: PageProps<"/admin/games/[id
           <p className="text-ink-muted">Noch keine Fragen. Lege unten die erste an.</p>
         ) : (
           <ul className="space-y-3">
-            {enriched.map(({ q, options: opts, playUrl, qr }, i) => (
-              <li
-                key={q.id}
-                className="grid grid-cols-[1fr_140px] gap-4 bg-white p-6 shadow-sm ring-1 ring-slate-200"
-              >
-                <div>
-                  <div className="font-display text-xs uppercase tracking-wider text-ink-muted">
-                    Frage {i + 1}
-                  </div>
-                  <div className="mt-1 text-lg font-medium">{q.prompt}</div>
-                  <ul className="mt-3 space-y-1">
-                    {opts.map((o) => (
-                      <li key={o.id} className="flex items-center gap-2 text-sm">
-                        <span
-                          className={`inline-block h-3 w-3 ${
-                            o.is_correct ? "bg-accent" : "bg-slate-200"
-                          }`}
-                        />
-                        <span className={o.is_correct ? "font-medium" : ""}>{o.label}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-3 flex items-center gap-3 text-xs text-ink-muted">
-                    <span className="font-mono">{playUrl}</span>
-                    <form action={deleteQuestion} className="inline">
-                      <input type="hidden" name="id" value={q.id} />
-                      <input type="hidden" name="gameId" value={g.id} />
-                      <button className="text-rose-600 hover:underline">Löschen</button>
-                    </form>
-                  </div>
-                </div>
-                <a
-                  href={qr}
-                  download={`qr-${q.slug}.png`}
-                  title="QR-Code herunterladen"
-                  className="flex flex-col items-center gap-1"
+            {enriched.map(({ q, options: opts, playUrl, qr }, i) =>
+              editingId === q.id ? (
+                <li
+                  key={q.id}
+                  className="bg-white p-6 shadow-sm ring-2 ring-brand"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={qr} alt="QR-Code" className="h-32 w-32 ring-1 ring-slate-200" />
-                  <span className="text-xs text-ink-muted hover:text-brand">PNG ↓</span>
-                </a>
-              </li>
-            ))}
+                  <div className="font-display text-xs uppercase tracking-wider text-brand">
+                    Frage {i + 1} · bearbeiten
+                  </div>
+                  <form action={updateQuestion} className="mt-3 space-y-4">
+                    <input type="hidden" name="questionId" value={q.id} />
+                    <input type="hidden" name="gameId" value={g.id} />
+                    <label className="block">
+                      <span className="mb-2 block text-xs font-medium uppercase tracking-wider text-ink-muted">
+                        Frage-Text
+                      </span>
+                      <textarea
+                        name="prompt"
+                        required
+                        rows={2}
+                        defaultValue={q.prompt}
+                        className="w-full border border-slate-300 px-3 py-2.5 outline-none focus:border-brand"
+                      />
+                    </label>
+                    <fieldset className="space-y-2">
+                      <legend className="mb-2 text-xs font-medium uppercase tracking-wider text-ink-muted">
+                        Antwort-Optionen
+                      </legend>
+                      {[0, 1, 2].map((idx) => {
+                        const existing = opts.find((o) => o.position === idx);
+                        return (
+                          <div key={idx} className="flex items-center gap-3">
+                            <input
+                              type="radio"
+                              name="correct"
+                              value={idx}
+                              required
+                              defaultChecked={existing?.is_correct ?? false}
+                              className="h-4 w-4 accent-brand"
+                              aria-label={`Option ${idx + 1} ist korrekt`}
+                            />
+                            <input
+                              name={`option_${idx}`}
+                              required
+                              defaultValue={existing?.label ?? ""}
+                              placeholder={`Option ${idx + 1}`}
+                              className="flex-1 border border-slate-300 px-3 py-2.5 outline-none focus:border-brand"
+                            />
+                          </div>
+                        );
+                      })}
+                      <p className="text-xs text-ink-muted">
+                        Radio-Button neben der korrekten Antwort wählen.
+                      </p>
+                    </fieldset>
+                    <div className="flex gap-2">
+                      <button
+                        type="submit"
+                        className="bg-brand px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-dark"
+                      >
+                        Speichern
+                      </button>
+                      <Link
+                        href={`/admin/games/${g.id}`}
+                        className="border border-slate-300 px-5 py-2.5 text-sm font-medium text-ink-muted hover:border-brand hover:text-brand"
+                      >
+                        Abbrechen
+                      </Link>
+                    </div>
+                  </form>
+                </li>
+              ) : (
+                <li
+                  key={q.id}
+                  className="grid grid-cols-[1fr_140px] gap-4 bg-white p-6 shadow-sm ring-1 ring-slate-200"
+                >
+                  <div>
+                    <div className="font-display text-xs uppercase tracking-wider text-ink-muted">
+                      Frage {i + 1}
+                    </div>
+                    <div className="mt-1 text-lg font-medium">{q.prompt}</div>
+                    <ul className="mt-3 space-y-1">
+                      {opts.map((o) => (
+                        <li key={o.id} className="flex items-center gap-2 text-sm">
+                          <span
+                            className={`inline-block h-3 w-3 ${
+                              o.is_correct ? "bg-accent" : "bg-slate-200"
+                            }`}
+                          />
+                          <span className={o.is_correct ? "font-medium" : ""}>{o.label}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-3 flex items-center gap-4 text-xs text-ink-muted">
+                      <span className="font-mono">{playUrl}</span>
+                      <Link
+                        href={`/admin/games/${g.id}?edit=${q.id}`}
+                        className="font-medium text-brand hover:underline"
+                      >
+                        Bearbeiten
+                      </Link>
+                      <form action={deleteQuestion} className="inline">
+                        <input type="hidden" name="id" value={q.id} />
+                        <input type="hidden" name="gameId" value={g.id} />
+                        <button className="text-rose-600 hover:underline">Löschen</button>
+                      </form>
+                    </div>
+                  </div>
+                  <a
+                    href={qr}
+                    download={`qr-${q.slug}.png`}
+                    title="QR-Code herunterladen"
+                    className="flex flex-col items-center gap-1"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={qr} alt="QR-Code" className="h-32 w-32 ring-1 ring-slate-200" />
+                    <span className="text-xs text-ink-muted hover:text-brand">PNG ↓</span>
+                  </a>
+                </li>
+              ),
+            )}
           </ul>
         )}
       </section>

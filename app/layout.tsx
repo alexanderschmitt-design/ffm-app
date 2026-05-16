@@ -16,8 +16,8 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Güntner · Kalkulations-Quiz",
-  description: "Live-Quiz der Kalkulations- und Steuerabteilung.",
+  title: "Güntner · FFM 2026 · Marktstand-Quiz",
+  description: "Live-Quiz am Güntner-Stand auf der FFM 2026.",
 };
 
 export default function RootLayout({

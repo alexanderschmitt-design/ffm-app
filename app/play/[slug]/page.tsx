@@ -30,7 +30,7 @@ export default async function PlayPage(props: PageProps<"/play/[slug]">) {
     <main className="flex min-h-dvh flex-col items-stretch bg-white p-5 text-ink">
       <header className="mb-5 border-b border-slate-200 pb-4">
         <p className="font-display text-[10px] uppercase tracking-[0.25em] text-brand">
-          Güntner · Kalkulations-Quiz
+          Güntner · FFM 2026 · Marktstand
         </p>
         <h1 className="mt-3 text-2xl font-semibold leading-tight sm:text-3xl">
           {row.prompt}
@@ -39,7 +39,7 @@ export default async function PlayPage(props: PageProps<"/play/[slug]">) {
       </header>
       <AnswerButtons questionId={row.question_id} options={options} />
       <footer className="mt-6 text-center text-xs text-ink-muted">
-        Tipp einfach eine Antwort an &mdash; die Auflösung folgt auf der Bühne.
+        Tipp einfach eine Antwort an &mdash; die Auflösung siehst du gleich am Stand.
       </footer>
     </main>
   );

@@ -23,7 +23,7 @@ export default async function LoginPage(props: PageProps<"/admin/login">) {
     <main className="flex min-h-dvh flex-col bg-surface-muted">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-8 py-5">
-          <GuentnerLogo subline="Kalkulations-Quiz" />
+          <GuentnerLogo subline="FFM 2026 · Marktstand-Quiz" />
         </div>
       </header>
       <div className="flex flex-1 items-center justify-center p-6">

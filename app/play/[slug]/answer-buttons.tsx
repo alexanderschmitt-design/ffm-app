@@ -56,7 +56,7 @@ export function AnswerButtons({ questionId, options }: { questionId: string; opt
           </div>
         )}
         <div className="text-sm text-ink-muted">
-          Auf der Bühne geht&apos;s gleich weiter — der Moderator löst auf.
+          Schau auf den Bildschirm am Stand — gleich geht&apos;s weiter.
         </div>
       </section>
     );

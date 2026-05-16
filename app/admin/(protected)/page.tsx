@@ -28,19 +28,20 @@ export default async function AdminGamesList() {
   const games = (data ?? []) as Game[];
 
   return (
-    <div className="space-y-8">
-      <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-        <h2 className="mb-4 text-lg font-semibold">Neues Spiel anlegen</h2>
-        <form action={createGameAction} className="flex gap-3">
+    <div className="space-y-10">
+      <section className="bg-white p-8 shadow-sm ring-1 ring-slate-200">
+        <h2 className="headline text-lg">Neues Spiel anlegen</h2>
+        <span className="headline-accent mb-5" />
+        <form action={createGameAction} className="mt-5 flex gap-3">
           <input
             name="name"
             required
             placeholder="z.B. Kongress 2026"
-            className="flex-1 rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-slate-500"
+            className="flex-1 border border-slate-300 px-3 py-2.5 outline-none focus:border-brand"
           />
           <button
             type="submit"
-            className="rounded-lg bg-slate-900 px-4 py-2 font-medium text-white hover:bg-slate-700"
+            className="bg-brand px-5 py-2.5 font-medium text-white transition hover:bg-brand-dark"
           >
             Anlegen
           </button>
@@ -48,18 +49,22 @@ export default async function AdminGamesList() {
       </section>
 
       <section>
-        <h2 className="mb-4 text-lg font-semibold">Vorhandene Spiele</h2>
+        <h2 className="headline text-lg">Vorhandene Spiele</h2>
+        <span className="headline-accent mb-5" />
         {games.length === 0 ? (
-          <p className="text-slate-500">Noch keine Spiele vorhanden.</p>
+          <p className="mt-4 text-ink-muted">Noch keine Spiele vorhanden.</p>
         ) : (
-          <ul className="divide-y divide-slate-200 overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200">
+          <ul className="mt-5 divide-y divide-slate-200 overflow-hidden bg-white ring-1 ring-slate-200">
             {games.map((g) => (
-              <li key={g.id} className="flex items-center justify-between p-4">
+              <li key={g.id} className="flex items-center justify-between p-5">
                 <div>
-                  <Link href={`/admin/games/${g.id}`} className="font-medium hover:underline">
+                  <Link
+                    href={`/admin/games/${g.id}`}
+                    className="font-medium text-ink hover:text-brand"
+                  >
                     {g.name}
                   </Link>
-                  <div className="text-xs text-slate-500">
+                  <div className="font-display mt-1 text-xs uppercase tracking-wider text-ink-muted">
                     {new Date(g.created_at).toLocaleString("de-DE")} · {g.status}
                   </div>
                 </div>
@@ -67,13 +72,13 @@ export default async function AdminGamesList() {
                   <Link
                     href={`/present/${g.id}`}
                     target="_blank"
-                    className="rounded-lg bg-slate-100 px-3 py-1 hover:bg-slate-200"
+                    className="border border-slate-300 px-4 py-2 text-ink hover:border-brand hover:text-brand"
                   >
                     Beamer öffnen ↗
                   </Link>
                   <Link
                     href={`/admin/games/${g.id}`}
-                    className="rounded-lg bg-slate-900 px-3 py-1 text-white hover:bg-slate-700"
+                    className="bg-brand px-4 py-2 text-white hover:bg-brand-dark"
                   >
                     Bearbeiten
                   </Link>

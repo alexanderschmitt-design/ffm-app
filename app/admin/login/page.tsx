@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { isAdmin, loginWithPassword } from "@/lib/auth";
+import { GuentnerLogo } from "@/app/brand";
 
 export const dynamic = "force-dynamic";
 
@@ -19,33 +20,47 @@ export default async function LoginPage(props: PageProps<"/admin/login">) {
   const showError = sp?.error === "1";
 
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-slate-50 p-6">
-      <form
-        action={loginAction}
-        className="w-full max-w-sm space-y-4 rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200"
-      >
-        <h1 className="text-2xl font-semibold">Admin-Login</h1>
-        <p className="text-sm text-slate-500">
-          Zum Verwalten der Spiele und Fragen.
-        </p>
-        <label className="block">
-          <span className="mb-1 block text-sm font-medium">Passwort</span>
-          <input
-            name="password"
-            type="password"
-            required
-            autoFocus
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-slate-500"
-          />
-        </label>
-        {showError && <p className="text-sm text-rose-600">Falsches Passwort.</p>}
-        <button
-          type="submit"
-          className="w-full rounded-lg bg-slate-900 px-4 py-2 font-medium text-white hover:bg-slate-700"
+    <main className="flex min-h-dvh flex-col bg-surface-muted">
+      <header className="border-b border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-8 py-5">
+          <GuentnerLogo subline="Kalkulations-Quiz" />
+        </div>
+      </header>
+      <div className="flex flex-1 items-center justify-center p-6">
+        <form
+          action={loginAction}
+          className="w-full max-w-sm space-y-5 bg-white p-10 shadow-sm ring-1 ring-slate-200"
         >
-          Anmelden
-        </button>
-      </form>
+          <div>
+            <h1 className="headline text-xl">Admin-Login</h1>
+            <span className="headline-accent" />
+          </div>
+          <p className="text-sm text-ink-muted">
+            Zum Verwalten der Spiele und Fragen.
+          </p>
+          <label className="block">
+            <span className="mb-2 block text-xs font-medium uppercase tracking-wider text-ink-muted">
+              Passwort
+            </span>
+            <input
+              name="password"
+              type="password"
+              required
+              autoFocus
+              className="w-full border border-slate-300 px-3 py-2.5 outline-none focus:border-brand"
+            />
+          </label>
+          {showError && (
+            <p className="text-sm text-rose-600">Falsches Passwort.</p>
+          )}
+          <button
+            type="submit"
+            className="w-full bg-brand px-4 py-2.5 font-medium text-white transition hover:bg-brand-dark"
+          >
+            Anmelden
+          </button>
+        </form>
+      </div>
     </main>
   );
 }

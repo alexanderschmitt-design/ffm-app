@@ -35,25 +35,27 @@ export function AnswerButtons({ questionId, options }: { questionId: string; opt
     const isRight = result.picked.id === result.correct.id;
     return (
       <section
-        className={`mt-4 flex flex-1 flex-col justify-center gap-6 rounded-2xl p-6 text-center ${
-          isRight ? "bg-emerald-600/20 ring-2 ring-emerald-500" : "bg-rose-600/20 ring-2 ring-rose-500"
+        className={`mt-4 flex flex-1 flex-col justify-center gap-6 p-8 text-center ${
+          isRight
+            ? "bg-accent/10 ring-2 ring-accent"
+            : "bg-rose-50 ring-2 ring-rose-500"
         }`}
         aria-live="polite"
       >
         <div
-          className={`text-5xl font-bold sm:text-6xl ${
-            isRight ? "text-emerald-300" : "text-rose-300"
+          className={`headline text-4xl sm:text-5xl ${
+            isRight ? "text-accent" : "text-rose-600"
           }`}
         >
           {isRight ? "Richtig!" : "Leider falsch."}
         </div>
         {!isRight && (
-          <div className="text-lg text-slate-200">
-            Richtig wäre gewesen:{" "}
-            <span className="font-semibold text-white">{result.correct.label}</span>
+          <div className="text-base text-ink">
+            Richtig wäre gewesen:
+            <div className="mt-2 text-xl font-semibold">{result.correct.label}</div>
           </div>
         )}
-        <div className="text-sm text-slate-400">
+        <div className="text-sm text-ink-muted">
           Auf der Bühne geht&apos;s gleich weiter — der Moderator löst auf.
         </div>
       </section>
@@ -67,12 +69,12 @@ export function AnswerButtons({ questionId, options }: { questionId: string; opt
           key={o.id}
           onClick={() => submit(o)}
           disabled={pending !== null}
-          className="flex min-h-[88px] w-full items-center justify-center rounded-xl bg-slate-800 px-4 py-4 text-xl font-medium text-slate-50 ring-1 ring-slate-700 transition active:scale-[0.98] hover:bg-slate-700 disabled:opacity-50"
+          className="flex min-h-[88px] w-full items-center justify-center bg-brand px-4 py-4 text-xl font-medium text-white transition active:scale-[0.98] hover:bg-brand-dark disabled:opacity-50"
         >
           {pending === o.id ? "Sende…" : o.label}
         </button>
       ))}
-      {error && <p className="mt-2 text-center text-sm text-rose-400">{error}</p>}
+      {error && <p className="mt-2 text-center text-sm text-rose-600">{error}</p>}
     </section>
   );
 }

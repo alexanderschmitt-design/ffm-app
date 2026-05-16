@@ -28,8 +28,6 @@ export function PresentClient({ game, questions }: Props) {
   const current: PresentationQuestion | undefined = questions[index];
   const currentId = current?.id;
 
-  // Reset reveal + counts when the active question changes — using the
-  // "store previous value" pattern so we don't need an effect for derived state.
   const [trackedId, setTrackedId] = useState<string | undefined>(currentId);
   if (currentId !== trackedId) {
     setTrackedId(currentId);
@@ -42,7 +40,6 @@ export function PresentClient({ game, questions }: Props) {
     [counts],
   );
 
-  // Realtime subscription on votes for current question
   const channelRef = useRef<ReturnType<ReturnType<typeof supabaseBrowser>["channel"]> | null>(null);
   useEffect(() => {
     if (!currentId) return;
@@ -71,7 +68,6 @@ export function PresentClient({ game, questions }: Props) {
     };
   }, [currentId]);
 
-  // Polling fallback every 2s in case Realtime drops
   useEffect(() => {
     if (!currentId) return;
     const sb = supabaseBrowser();
@@ -122,7 +118,7 @@ export function PresentClient({ game, questions }: Props) {
 
   if (questions.length === 0) {
     return (
-      <main className="flex min-h-dvh items-center justify-center bg-slate-950 text-slate-100">
+      <main className="flex min-h-dvh items-center justify-center bg-white text-ink">
         <p className="text-2xl">Dieses Spiel hat noch keine Fragen.</p>
       </main>
     );
@@ -133,19 +129,25 @@ export function PresentClient({ game, questions }: Props) {
   const maxCount = Math.max(1, ...Object.values(counts));
 
   return (
-    <main className="flex min-h-dvh flex-col bg-slate-950 text-slate-100">
-      <header className="flex items-baseline justify-between border-b border-slate-800 px-10 py-4">
-        <div className="text-sm uppercase tracking-widest text-slate-400">
-          {game.name}
+    <main className="flex min-h-dvh flex-col bg-white text-ink">
+      <header className="flex items-baseline justify-between border-b border-slate-200 bg-white px-12 py-5">
+        <div className="flex items-baseline gap-4">
+          <span className="text-xl font-semibold text-brand">Güntner</span>
+          <span className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
+            {game.name}
+          </span>
         </div>
-        <div className="text-sm text-slate-400">
+        <div className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
           Frage {index + 1} / {questions.length}
         </div>
       </header>
 
-      <div className="grid flex-1 grid-cols-[1fr_360px] gap-10 px-10 py-8">
+      <div className="grid flex-1 grid-cols-[1fr_360px] gap-12 px-12 py-10">
         <section className="flex flex-col gap-8">
-          <h1 className="text-5xl font-bold leading-tight">{current.prompt}</h1>
+          <div>
+            <h1 className="text-5xl font-semibold leading-tight">{current.prompt}</h1>
+            <span className="headline-accent mt-4 !w-16 !h-[3px]" />
+          </div>
 
           <ul className="flex flex-col gap-4">
             {current.options.map((o) => {
@@ -156,30 +158,31 @@ export function PresentClient({ game, questions }: Props) {
               return (
                 <li
                   key={o.id}
-                  className={`relative overflow-hidden rounded-xl border px-6 py-5 text-3xl transition ${
+                  className={`relative overflow-hidden border px-6 py-5 text-3xl transition ${
                     highlight
-                      ? "border-emerald-500 bg-emerald-600/10"
-                      : "border-slate-700 bg-slate-900/60"
+                      ? "border-accent bg-accent/10"
+                      : "border-slate-200 bg-surface-muted"
                   }`}
                 >
                   <div
                     className={`absolute inset-y-0 left-0 transition-[width] duration-700 ease-out ${
-                      highlight ? "bg-emerald-500/20" : "bg-slate-700/40"
+                      highlight ? "bg-accent/30" : "bg-brand/20"
                     }`}
                     style={{ width: revealed ? `${barPct}%` : "0%" }}
                   />
                   <div className="relative flex items-center justify-between">
                     <span className="font-medium">
                       {highlight && (
-                        <span className="mr-3 inline-block rounded bg-emerald-500 px-2 py-1 text-sm font-bold text-emerald-950">
+                        <span className="mr-3 inline-block bg-accent px-2 py-1 text-sm font-bold text-white">
                           ✓
                         </span>
                       )}
                       {o.label}
                     </span>
                     {revealed && (
-                      <span className="font-mono text-2xl text-slate-300">
-                        {count} <span className="text-base text-slate-500">({pct}%)</span>
+                      <span className="font-mono text-2xl text-ink">
+                        {count}{" "}
+                        <span className="text-base text-ink-muted">({pct}%)</span>
                       </span>
                     )}
                   </div>
@@ -189,15 +192,15 @@ export function PresentClient({ game, questions }: Props) {
           </ul>
 
           {!revealed && (
-            <div className="mt-2 text-2xl text-slate-300">
+            <div className="mt-2 text-2xl text-ink-muted">
               Antworten eingegangen:{" "}
-              <span className="font-mono text-3xl text-emerald-400">{totalAnswers}</span>
+              <span className="font-mono text-3xl text-brand">{totalAnswers}</span>
             </div>
           )}
         </section>
 
         <aside className="flex flex-col items-center gap-4">
-          <div className="rounded-2xl bg-white p-3">
+          <div className="border border-slate-200 bg-white p-3">
             <Image
               src={current.qrDataUrl}
               alt="QR-Code zur Antwortseite"
@@ -206,33 +209,37 @@ export function PresentClient({ game, questions }: Props) {
               unoptimized
             />
           </div>
-          <div className="text-center text-sm text-slate-400">
+          <div className="font-display text-center text-xs uppercase tracking-[0.18em] text-ink-muted">
             Mit dem Handy scannen<br />und antworten
           </div>
-          <div className="break-all text-center font-mono text-xs text-slate-500">
+          <div className="break-all text-center font-mono text-xs text-ink-muted">
             {current.playUrl}
           </div>
         </aside>
       </div>
 
-      <footer className="flex items-center justify-between border-t border-slate-800 px-10 py-4 text-sm text-slate-400">
-        <div>
-          <kbd className="rounded bg-slate-800 px-2 py-1">←</kbd>{" "}
-          <kbd className="rounded bg-slate-800 px-2 py-1">→</kbd> Frage wechseln &middot;{" "}
-          <kbd className="rounded bg-slate-800 px-2 py-1">Space</kbd> auflösen
+      <footer className="flex items-center justify-between border-t border-slate-200 bg-surface-muted px-12 py-4 text-sm text-ink-muted">
+        <div className="font-display text-xs uppercase tracking-[0.18em]">
+          <kbd className="border border-slate-300 bg-white px-2 py-1">←</kbd>{" "}
+          <kbd className="border border-slate-300 bg-white px-2 py-1">→</kbd>{" "}
+          Frage wechseln &middot;{" "}
+          <kbd className="border border-slate-300 bg-white px-2 py-1">Space</kbd>{" "}
+          auflösen
         </div>
         <div className="flex gap-3">
           <button
             onClick={prev}
             disabled={index === 0}
-            className="rounded bg-slate-800 px-4 py-2 hover:bg-slate-700 disabled:opacity-40"
+            className="border border-slate-300 bg-white px-5 py-2 hover:border-brand hover:text-brand disabled:opacity-40"
           >
             ← Zurück
           </button>
           <button
             onClick={toggleReveal}
-            className={`rounded px-4 py-2 font-medium ${
-              revealed ? "bg-slate-700 hover:bg-slate-600" : "bg-emerald-600 hover:bg-emerald-500"
+            className={`px-5 py-2 font-medium ${
+              revealed
+                ? "border border-slate-300 bg-white hover:border-brand"
+                : "bg-accent text-white hover:bg-accent/85"
             }`}
           >
             {revealed ? "Verbergen" : "Auflösen"}
@@ -240,7 +247,7 @@ export function PresentClient({ game, questions }: Props) {
           <button
             onClick={next}
             disabled={index === questions.length - 1}
-            className="rounded bg-slate-800 px-4 py-2 hover:bg-slate-700 disabled:opacity-40"
+            className="bg-brand px-5 py-2 text-white hover:bg-brand-dark disabled:opacity-40"
           >
             Weiter →
           </button>

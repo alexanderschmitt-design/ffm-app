@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { isAdmin } from "@/lib/auth";
+import { GuentnerLogo } from "@/app/brand";
 
 export default async function AdminProtectedLayout({
   children,
@@ -11,18 +11,18 @@ export default async function AdminProtectedLayout({
   if (!ok) redirect("/admin/login");
 
   return (
-    <div className="min-h-dvh bg-slate-50 text-slate-900">
+    <div className="min-h-dvh bg-surface-muted text-ink">
       <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <Link href="/admin" className="text-lg font-semibold">
-            Kalkulations-Quiz · Admin
-          </Link>
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-8 py-5">
+          <GuentnerLogo subline="Kalkulations-Quiz · Admin" />
           <form action="/api/admin/logout" method="post">
-            <button className="text-sm text-slate-500 hover:text-slate-900">Abmelden</button>
+            <button className="font-display text-xs uppercase tracking-[0.18em] text-ink-muted hover:text-brand">
+              Abmelden
+            </button>
           </form>
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-6 py-8">{children}</main>
+      <main className="mx-auto max-w-6xl px-8 py-10">{children}</main>
     </div>
   );
 }

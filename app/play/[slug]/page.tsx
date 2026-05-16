@@ -27,13 +27,18 @@ export default async function PlayPage(props: PageProps<"/play/[slug]">) {
   const options = (row.options_json ?? []).sort((a, b) => a.position - b.position);
 
   return (
-    <main className="flex min-h-dvh flex-col items-stretch bg-slate-950 p-5 text-slate-50">
-      <header className="mb-4">
-        <p className="text-xs uppercase tracking-widest text-slate-400">Kalkulations-Quiz</p>
-        <h1 className="mt-2 text-2xl font-semibold leading-tight sm:text-3xl">{row.prompt}</h1>
+    <main className="flex min-h-dvh flex-col items-stretch bg-white p-5 text-ink">
+      <header className="mb-5 border-b border-slate-200 pb-4">
+        <p className="font-display text-[10px] uppercase tracking-[0.25em] text-brand">
+          Güntner · Kalkulations-Quiz
+        </p>
+        <h1 className="mt-3 text-2xl font-semibold leading-tight sm:text-3xl">
+          {row.prompt}
+        </h1>
+        <span className="headline-accent mt-3" />
       </header>
       <AnswerButtons questionId={row.question_id} options={options} />
-      <footer className="mt-6 text-center text-xs text-slate-500">
+      <footer className="mt-6 text-center text-xs text-ink-muted">
         Tipp einfach eine Antwort an &mdash; die Auflösung folgt auf der Bühne.
       </footer>
     </main>

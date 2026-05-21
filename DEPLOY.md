@@ -90,3 +90,32 @@ git checkout -b feature/xyz
 git push -u origin feature/xyz
 ```
 Vercel erstellt automatisch eine Preview-URL und postet sie als GitHub-Check.
+
+## Deploy-Workflow für KI-Agenten (Claude Code)
+
+Dieses Repo nutzt **direct push to `main`** als Production-Workflow — kein PR-Review zwischengeschaltet. Wenn der Agent „deploy" sagt, darf/soll er:
+
+1. relevante Änderungen committen (Co-Author-Trailer setzen)
+2. `git push origin main` ausführen — löst den Vercel-Production-Build aus
+3. den Deploy-Status verfolgen (z.B. `gh run watch`) und das Ergebnis melden
+
+**Permission-Setup (einmalig)**: Standardmäßig blockiert Claude Code direkte Pushes auf den Default-Branch. Um den Push ohne Nachfrage zu erlauben, in `.claude/settings.local.json` (gitignored) ergänzen:
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(git push:*)",
+      "PowerShell(git push:*)"
+    ]
+  }
+}
+```
+
+Alternativ: bei jedem Push-Prompt einmalig „Allow" wählen.
+
+**Sicherheits-Guardrails, die bleiben:**
+- `.env*` ist gitignored (Secrets nie ins Repo)
+- `/public/Sudoku Game.xlsx` ist gitignored (interne CbCR-Zahlen nie öffentlich servieren)
+- Niemals `git push --force` auf `main` ohne explizite Anweisung
+- Vor dem Push lokal `npm run build` durchlaufen lassen — fehlschlagende Vercel-Builds vermeiden

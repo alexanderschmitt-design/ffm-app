@@ -1,0 +1,11 @@
+# Binary assets — never apply line-ending normalization.
+# Especially important for PDFs (xref byte offsets break on CRLF/LF conversion).
+*.pdf  binary
+*.webp binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.xlsx binary
+*.zip  binary

@@ -62,19 +62,24 @@ export default async function Home() {
 
       <main className="flex flex-1 flex-col">
         <section className="bg-white px-8 py-20">
-          <div className="mx-auto grid max-w-6xl items-center gap-16 md:grid-cols-[1.1fr_1fr]">
+          <div className="mx-auto grid max-w-6xl items-start gap-12 md:grid-cols-[1.1fr_1fr]">
             <div>
               <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
                 Güntner · FFM 2026 · Marktstand
               </p>
               <h1 className="headline mt-4 text-4xl leading-[1.15] md:text-5xl">
-                Trockene Zahlen,<br />live geraten.
+                Hi! Lust auf ein<br />kleines Zahlenspiel?
               </h1>
               <span className="headline-accent" />
-              <p className="mt-8 max-w-md text-base leading-relaxed text-ink-muted">
-                Am Güntner-Stand auf der FFM 2026: Scann den QR-Code, beantworte die
-                Frage auf deinem Handy — und komm mit uns ins Gespräch über Kalkulation
-                und Steuern bei Güntner.
+              <p className="mt-8 max-w-md text-base leading-relaxed text-ink">
+                Acht Fragen aus dem Güntner-Konzern — Mitarbeiter, Umsätze und
+                Steuersätze von Brasilien bis Singapur. Spoiler: in China haben
+                wir <em>deutlich</em> weniger Leute, als du denkst.
+              </p>
+              <p className="mt-4 max-w-md text-base leading-relaxed text-ink-muted">
+                Schnapp dir dein Handy, scann den QR und tipp dich durch. Dauert
+                keine zwei Minuten — danach siehst du, wie nah du dran warst.
+                Komm gern danach an den Stand für die ganze Story.
               </p>
               {target?.game && (
                 <p className="mt-6 font-display text-xs uppercase tracking-[0.18em] text-ink-muted">
@@ -88,28 +93,39 @@ export default async function Home() {
               )}
             </div>
 
-            <div className="flex flex-col items-center gap-5">
+            <div className="flex flex-col gap-6">
+              <div className="relative aspect-[4/3] w-full overflow-hidden">
+                <Image
+                  src="/InnovationStories.webp"
+                  alt="Blick in die Güntner-Produktion"
+                  fill
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  className="object-cover"
+                  priority
+                />
+              </div>
+
               {qr && playUrl ? (
-                <>
-                  <div className="border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="border border-slate-200 bg-white p-4 shadow-sm">
                     <Image
                       src={qr}
                       alt="QR-Code zum Mitspielen"
-                      width={360}
-                      height={360}
+                      width={240}
+                      height={240}
                       unoptimized
                       priority
                     />
                   </div>
                   <div className="font-display text-center text-xs uppercase tracking-[0.2em] text-ink-muted">
-                    Mit dem Handy scannen<br />und mitspielen
+                    Scann mich und leg los
                   </div>
-                  <div className="break-all text-center font-mono text-xs text-ink-muted">
+                  <div className="break-all text-center font-mono text-[11px] text-ink-muted">
                     {playUrl}
                   </div>
-                </>
+                </div>
               ) : (
-                <div className="flex aspect-square w-full max-w-sm flex-col items-center justify-center border border-dashed border-slate-300 bg-surface-muted p-8 text-center">
+                <div className="flex w-full flex-col items-center justify-center border border-dashed border-slate-300 bg-surface-muted p-8 text-center">
                   <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
                     Kein Spiel bereit
                   </p>

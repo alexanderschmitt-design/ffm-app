@@ -87,7 +87,11 @@ export default async function BoothLandingPage(
                 Güntner Company Market 2026
               </p>
               <h1 className="headline mt-4 text-4xl leading-[1.15] md:text-5xl">
-                Test Your Güntner Pulse —<br />A Quick Executive Challenge
+                {target.booth.slug === "gpc" ? (
+                  <>Test your Güntner<br />product knowledge.</>
+                ) : (
+                  <>Test Your Güntner Pulse —<br />A Quick Executive Challenge</>
+                )}
               </h1>
               <span className="headline-accent" />
               <p className="mt-8 max-w-md text-base leading-relaxed text-ink">

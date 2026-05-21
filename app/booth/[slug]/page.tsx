@@ -84,7 +84,7 @@ export default async function BoothLandingPage(
           <div className="mx-auto grid max-w-6xl items-start gap-12 md:grid-cols-[1.1fr_1fr]">
             <div>
               <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-                Güntner Company Market 20206
+                Güntner Company Market 2026
               </p>
               <h1 className="headline mt-4 text-4xl leading-[1.15] md:text-5xl">
                 Test Your Güntner Pulse —<br />A Quick Executive Challenge

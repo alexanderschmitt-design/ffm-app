@@ -5,6 +5,16 @@ import { useState } from "react";
 type Option = { id: string; label: string; position: number; is_correct: boolean };
 type Q = { id: string; prompt: string; options: Option[] };
 
+export type QuizBonus = {
+  teaserSrc: string;
+  teaserAlt: string;
+  headline: string;
+  body: string;
+  downloadHref: string;
+  downloadLabel: string;
+  downloadFilename: string;
+};
+
 type Answer = {
   questionId: string;
   prompt: string;
@@ -13,7 +23,13 @@ type Answer = {
   isCorrect: boolean;
 };
 
-export function QuizRunner({ questions }: { questions: Q[] }) {
+export function QuizRunner({
+  questions,
+  bonus,
+}: {
+  questions: Q[];
+  bonus?: QuizBonus;
+}) {
   const [index, setIndex] = useState(0);
   const [pending, setPending] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Answer[]>([]);
@@ -77,6 +93,31 @@ export function QuizRunner({ questions }: { questions: Q[] }) {
             </li>
           ))}
         </ol>
+
+        {bonus && (
+          <section className="mt-4 overflow-hidden border border-slate-200 bg-white">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={bonus.teaserSrc}
+              alt={bonus.teaserAlt}
+              className="block h-auto w-full"
+            />
+            <div className="p-5">
+              <h3 className="headline text-lg">{bonus.headline}</h3>
+              <span className="headline-accent" />
+              <p className="mt-4 text-sm leading-relaxed text-ink-muted">
+                {bonus.body}
+              </p>
+              <a
+                href={bonus.downloadHref}
+                download={bonus.downloadFilename}
+                className="mt-5 inline-flex items-center gap-2 bg-accent px-5 py-3 text-sm font-medium text-white transition hover:bg-accent/85"
+              >
+                {bonus.downloadLabel} ↓
+              </a>
+            </div>
+          </section>
+        )}
 
         <button
           onClick={() => {

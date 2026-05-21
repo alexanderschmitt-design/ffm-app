@@ -1,0 +1,76 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 1 /Kids [3 0 R] >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 520 >>
+stream
+BT
+/F1 28 Tf
+72 760 Td
+(G¸ntner Lego Blueprint  Placeholder) Tj
+ET
+BT
+/F2 14 Tf
+72 700 Td
+() Tj
+ET
+BT
+/F2 14 Tf
+72 676 Td
+(This is a placeholder PDF.) Tj
+ET
+BT
+/F2 14 Tf
+72 652 Td
+(Replace public/lego-guentner-plan.pdf with the real Lego) Tj
+ET
+BT
+/F2 14 Tf
+72 628 Td
+(building instructions before the booth goes live.) Tj
+ET
+BT
+/F2 14 Tf
+72 604 Td
+() Tj
+ET
+BT
+/F2 14 Tf
+72 580 Td
+(Path: public/lego-guentner-plan.pdf) Tj
+ET
+BT
+/F2 14 Tf
+72 556 Td
+(Linked from: /quiz/[gameId] summary screen \(gpc booth only\).) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000257 00000 n 
+0000000827 00000 n 
+0000000902 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+972
+%%EOF

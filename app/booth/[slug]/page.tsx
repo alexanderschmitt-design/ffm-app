@@ -84,21 +84,27 @@ export default async function BoothLandingPage(
           <div className="mx-auto grid max-w-6xl items-start gap-12 md:grid-cols-[1.1fr_1fr]">
             <div>
               <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-                Güntner · FFM 2026 · {target.booth.name}
+                Güntner Company Market 20206
               </p>
               <h1 className="headline mt-4 text-4xl leading-[1.15] md:text-5xl">
-                Trockene Zahlen,<br />live geraten.
+                Test Your Güntner Pulse —<br />A Quick Executive Challenge
               </h1>
               <span className="headline-accent" />
-              {target.booth.tagline && (
-                <p className="mt-8 max-w-md text-base leading-relaxed text-ink">
-                  {target.booth.tagline}
-                </p>
-              )}
+              <p className="mt-8 max-w-md text-base leading-relaxed text-ink">
+                Are you ready for a brief data check? We have compiled eight
+                strategic questions covering the internal metrics of the
+                Güntner Group — from headcount and revenue to tax structures
+                spanning Brazil to Singapore. Spoiler alert: our footprint in
+                China might look completely different than you expect.
+              </p>
               <p className="mt-4 max-w-md text-base leading-relaxed text-ink-muted">
-                Grab your phone, scan the QR and tap through. Under two
-                minutes — then you&apos;ll see how close you got. Drop by the
-                booth afterwards for the full story.
+                Simply scan the QR code with your phone to benchmark your
+                insights. The challenge takes less than two minutes, and you
+                will receive your score instantly.
+              </p>
+              <p className="mt-4 max-w-md text-base leading-relaxed text-ink-muted">
+                We look forward to sharing the full story and detailed
+                insights with you at our booth afterwards.
               </p>
               {target.game && (
                 <p className="mt-6 font-display text-xs uppercase tracking-[0.18em] text-ink-muted">

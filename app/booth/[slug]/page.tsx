@@ -6,8 +6,46 @@ import { GuentnerLogo } from "@/app/brand";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { qrDataUrl } from "@/lib/qr";
 import type { Booth } from "@/lib/types";
+import type { ReactNode } from "react";
 
 export const dynamic = "force-dynamic";
+
+type BoothCopy = { headline: ReactNode; intro: ReactNode };
+
+const BOOTH_COPY: Record<string, BoothCopy> = {
+  tax: {
+    headline: (
+      <>
+        Test Your Güntner Pulse —<br />A Quick Executive Challenge
+      </>
+    ),
+    intro: (
+      <>
+        Are you ready for a brief data check? We have compiled eight
+        strategic questions covering the internal metrics of the Güntner
+        Group — from headcount and revenue to tax structures spanning
+        Brazil to Singapore. Spoiler alert: our footprint in China might
+        look completely different than you expect.
+      </>
+    ),
+  },
+  gpc: {
+    headline: (
+      <>
+        Test your Güntner<br />product knowledge.
+      </>
+    ),
+    intro: (
+      <>
+        Are you curious about the numbers behind Güntner product
+        configuration? We have prepared eight strategic questions covering
+        our product range — from the count of configurable variants and
+        the components inside each unit to how digitalization is
+        reshaping the way we configure Güntner products.
+      </>
+    ),
+  },
+};
 
 async function getBoothAndGame(slug: string) {
   const sb = supabaseAdmin();
@@ -71,6 +109,8 @@ export default async function BoothLandingPage(
       : null;
   const qr = playUrl ? await qrDataUrl(playUrl) : null;
 
+  const copy = BOOTH_COPY[target.booth.slug] ?? BOOTH_COPY.tax;
+
   return (
     <>
       <header className="border-b border-surface-muted bg-white">
@@ -87,19 +127,11 @@ export default async function BoothLandingPage(
                 Güntner Company Market 2026
               </p>
               <h1 className="headline mt-4 text-4xl leading-[1.15] md:text-5xl">
-                {target.booth.slug === "gpc" ? (
-                  <>Test your Güntner<br />product knowledge.</>
-                ) : (
-                  <>Test Your Güntner Pulse —<br />A Quick Executive Challenge</>
-                )}
+                {copy.headline}
               </h1>
               <span className="headline-accent" />
               <p className="mt-8 max-w-md text-base leading-relaxed text-ink">
-                Are you ready for a brief data check? We have compiled eight
-                strategic questions covering the internal metrics of the
-                Güntner Group — from headcount and revenue to tax structures
-                spanning Brazil to Singapore. Spoiler alert: our footprint in
-                China might look completely different than you expect.
+                {copy.intro}
               </p>
               <p className="mt-4 max-w-md text-base leading-relaxed text-ink-muted">
                 Simply scan the QR code with your phone to benchmark your

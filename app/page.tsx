@@ -1,7 +1,59 @@
+import Image from "next/image";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { GuentnerLogo } from "./brand";
+import { supabaseAdmin } from "@/lib/supabase/server";
+import { qrDataUrl } from "@/lib/qr";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+async function getStartTarget() {
+  const sb = supabaseAdmin();
+
+  const { data: live } = await sb
+    .from("games")
+    .select("id, name, status")
+    .eq("status", "live")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const game =
+    live ??
+    (
+      await sb
+        .from("games")
+        .select("id, name, status")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle()
+    ).data;
+
+  if (!game) return null;
+
+  const { data: q } = await sb
+    .from("questions")
+    .select("slug")
+    .eq("game_id", game.id)
+    .order("position", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (!q) return { game, slug: null as string | null };
+  return { game, slug: q.slug as string };
+}
+
+export default async function Home() {
+  const target = await getStartTarget();
+
+  const h = await headers();
+  const host = h.get("host") ?? "localhost:3000";
+  const proto = (h.get("x-forwarded-proto") ?? "http").split(",")[0];
+  const baseUrl = `${proto}://${host}`;
+
+  const playUrl = target?.slug ? `${baseUrl}/play/${target.slug}` : null;
+  const qr = playUrl ? await qrDataUrl(playUrl) : null;
+
   return (
     <>
       <header className="border-b border-surface-muted bg-white">
@@ -9,9 +61,10 @@ export default function Home() {
           <GuentnerLogo />
         </div>
       </header>
+
       <main className="flex flex-1 flex-col">
-        <section className="bg-white px-8 py-24">
-          <div className="mx-auto grid max-w-6xl items-center gap-16 md:grid-cols-2">
+        <section className="bg-white px-8 py-20">
+          <div className="mx-auto grid max-w-6xl items-center gap-16 md:grid-cols-[1.1fr_1fr]">
             <div>
               <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
                 Güntner · FFM 2026 · Marktstand
@@ -21,37 +74,68 @@ export default function Home() {
               </h1>
               <span className="headline-accent" />
               <p className="mt-8 max-w-md text-base leading-relaxed text-ink-muted">
-                Am Güntner-Stand auf der FFM 2026: Scann den QR-Code, beantworte die Frage
-                auf deinem Handy — und komm mit uns ins Gespräch über Kalkulation und
-                Steuern bei Güntner.
+                Am Güntner-Stand auf der FFM 2026: Scann den QR-Code, beantworte die
+                Frage auf deinem Handy — und komm mit uns ins Gespräch über Kalkulation
+                und Steuern bei Güntner.
               </p>
-              <p className="mt-4 text-sm text-ink-muted">
-                Du betreust den Stand und willst Fragen verwalten?
-              </p>
-              <Link
-                href="/admin"
-                className="mt-6 inline-block bg-brand px-7 py-3 font-medium text-white transition hover:bg-brand-dark"
-              >
-                Zum Admin-Bereich
-              </Link>
+              {target?.game && (
+                <p className="mt-6 font-display text-xs uppercase tracking-[0.18em] text-ink-muted">
+                  Aktuell: {target.game.name}
+                  {target.game.status === "live" && (
+                    <span className="ml-3 inline-block bg-accent px-2 py-0.5 text-[10px] text-white">
+                      LIVE
+                    </span>
+                  )}
+                </p>
+              )}
             </div>
-            <div className="hidden md:block">
-              <div className="aspect-square bg-gradient-to-br from-brand/10 via-accent/10 to-brand/5 p-12">
-                <div className="flex h-full w-full items-center justify-center">
-                  <svg viewBox="0 0 200 200" className="w-full max-w-xs">
-                    <circle cx="100" cy="100" r="90" fill="none" stroke="#0084ca" strokeWidth="1.5" opacity="0.4" />
-                    <ellipse cx="100" cy="100" rx="90" ry="35" fill="none" stroke="#0084ca" strokeWidth="1.5" opacity="0.4" />
-                    <ellipse cx="100" cy="100" rx="35" ry="90" fill="none" stroke="#0084ca" strokeWidth="1.5" opacity="0.4" />
-                    <ellipse cx="100" cy="100" rx="90" ry="60" fill="none" stroke="#1abc9c" strokeWidth="1.5" opacity="0.5" />
-                  </svg>
+
+            <div className="flex flex-col items-center gap-5">
+              {qr && playUrl ? (
+                <>
+                  <div className="border border-slate-200 bg-white p-5 shadow-sm">
+                    <Image
+                      src={qr}
+                      alt="QR-Code zum Mitspielen"
+                      width={360}
+                      height={360}
+                      unoptimized
+                      priority
+                    />
+                  </div>
+                  <div className="font-display text-center text-xs uppercase tracking-[0.2em] text-ink-muted">
+                    Mit dem Handy scannen<br />und mitspielen
+                  </div>
+                  <div className="break-all text-center font-mono text-xs text-ink-muted">
+                    {playUrl}
+                  </div>
+                </>
+              ) : (
+                <div className="flex aspect-square w-full max-w-sm flex-col items-center justify-center border border-dashed border-slate-300 bg-surface-muted p-8 text-center">
+                  <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
+                    Kein Spiel bereit
+                  </p>
+                  <p className="mt-3 text-sm text-ink-muted">
+                    Leg im Admin-Bereich ein Spiel mit mindestens einer Frage an,
+                    dann erscheint hier der QR-Code zum Mitspielen.
+                  </p>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </section>
       </main>
-      <footer className="bg-surface-muted px-8 py-6 text-center text-xs text-ink-muted">
-        © Güntner · Marktstand-Quiz · FFM 2026
+
+      <footer className="border-t border-surface-muted bg-surface-muted px-8 py-5">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 text-xs text-ink-muted md:flex-row">
+          <span>© Güntner · Marktstand-Quiz · FFM 2026</span>
+          <Link
+            href="/admin"
+            className="font-display uppercase tracking-[0.18em] hover:text-brand"
+          >
+            Admin-Bereich →
+          </Link>
+        </div>
       </footer>
     </>
   );

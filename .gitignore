@@ -37,6 +37,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# dev-server runtime log (local-only)
+dev.log
+
+# internal reference data — kept out of /public so it isn't served publicly
+/public/Sudoku Game.xlsx
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

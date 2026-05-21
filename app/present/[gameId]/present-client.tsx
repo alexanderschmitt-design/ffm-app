@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
+import { GuentnerMark } from "@/app/brand";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import type { Game, AnswerOption } from "@/lib/types";
 
@@ -130,9 +131,10 @@ export function PresentClient({ game, questions }: Props) {
 
   return (
     <main className="flex min-h-dvh flex-col bg-white text-ink">
-      <header className="flex items-baseline justify-between border-b border-slate-200 bg-white px-12 py-5">
-        <div className="flex items-baseline gap-4">
-          <span className="text-xl font-semibold text-brand">Güntner</span>
+      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-12 py-5">
+        <div className="flex items-center gap-5">
+          <GuentnerMark className="h-14 w-auto" />
+          <span aria-hidden className="h-9 w-px bg-slate-300" />
           <span className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
             {game.name}
           </span>

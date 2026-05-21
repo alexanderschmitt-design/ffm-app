@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase/server";
+import { GuentnerMark } from "@/app/brand";
 import { AnswerButtons } from "./answer-buttons";
 
 type Option = {
@@ -29,8 +30,9 @@ export default async function PlayPage(props: PageProps<"/play/[slug]">) {
   return (
     <main className="flex min-h-dvh flex-col items-stretch bg-white p-5 text-ink">
       <header className="mb-5 border-b border-slate-200 pb-4">
-        <p className="font-display text-[10px] uppercase tracking-[0.25em] text-brand">
-          Güntner · FFM 2026 · Marktstand
+        <GuentnerMark className="h-10 w-auto" />
+        <p className="mt-3 font-display text-[10px] uppercase tracking-[0.25em] text-brand">
+          FFM 2026 · Marktstand
         </p>
         <h1 className="mt-3 text-2xl font-semibold leading-tight sm:text-3xl">
           {row.prompt}

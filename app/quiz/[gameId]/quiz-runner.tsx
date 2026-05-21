@@ -1,0 +1,187 @@
+"use client";
+
+import { useState } from "react";
+
+type Option = { id: string; label: string; position: number; is_correct: boolean };
+type Q = { id: string; prompt: string; options: Option[] };
+
+type Answer = {
+  questionId: string;
+  prompt: string;
+  picked: Option;
+  correct: Option;
+  isCorrect: boolean;
+};
+
+export function QuizRunner({ questions }: { questions: Q[] }) {
+  const [index, setIndex] = useState(0);
+  const [pending, setPending] = useState<string | null>(null);
+  const [answers, setAnswers] = useState<Answer[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  if (questions.length === 0) {
+    return (
+      <section className="flex flex-1 flex-col items-center justify-center text-center text-ink-muted">
+        <p>Dieses Spiel hat noch keine Fragen.</p>
+      </section>
+    );
+  }
+
+  if (index >= questions.length) {
+    const correctCount = answers.filter((a) => a.isCorrect).length;
+    return (
+      <section className="mt-2 flex flex-1 flex-col gap-5" aria-live="polite">
+        <div className="flex flex-col items-center bg-surface-muted p-6 text-center">
+          <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
+            Dein Ergebnis
+          </p>
+          <p className="mt-2 text-5xl font-semibold text-brand">
+            {correctCount}{" "}
+            <span className="text-2xl text-ink-muted">/ {answers.length}</span>
+          </p>
+          <p className="mt-1 text-sm text-ink-muted">richtig</p>
+        </div>
+
+        <ol className="flex flex-col gap-3">
+          {answers.map((a, i) => (
+            <li
+              key={a.questionId}
+              className={`border-l-4 p-4 ${
+                a.isCorrect
+                  ? "border-accent bg-accent/5"
+                  : "border-rose-500 bg-rose-50"
+              }`}
+            >
+              <div className="font-display text-[10px] uppercase tracking-wider text-ink-muted">
+                Frage {i + 1}
+              </div>
+              <div className="mt-1 font-medium">{a.prompt}</div>
+              <div className="mt-2 text-sm">
+                <span className="text-ink-muted">Deine Antwort: </span>
+                <span
+                  className={
+                    a.isCorrect
+                      ? "font-semibold text-accent"
+                      : "font-semibold text-rose-600"
+                  }
+                >
+                  {a.picked.label}
+                </span>
+              </div>
+              {!a.isCorrect && (
+                <div className="text-sm">
+                  <span className="text-ink-muted">Richtig wäre: </span>
+                  <span className="font-semibold text-ink">{a.correct.label}</span>
+                </div>
+              )}
+            </li>
+          ))}
+        </ol>
+
+        <button
+          onClick={() => {
+            setIndex(0);
+            setAnswers([]);
+            setError(null);
+          }}
+          className="mt-2 bg-brand px-5 py-3 text-base font-medium text-white transition hover:bg-brand-dark"
+        >
+          Nochmal spielen
+        </button>
+      </section>
+    );
+  }
+
+  const q = questions[index];
+  const currentAnswer = answers[index];
+
+  async function submit(option: Option) {
+    if (pending || currentAnswer) return;
+    setError(null);
+    setPending(option.id);
+    try {
+      const res = await fetch("/api/vote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ questionId: q.id, optionId: option.id }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const correct = q.options.find((o) => o.is_correct) ?? option;
+      const answer: Answer = {
+        questionId: q.id,
+        prompt: q.prompt,
+        picked: option,
+        correct,
+        isCorrect: option.id === correct.id,
+      };
+      setAnswers((prev) => [...prev, answer]);
+      setPending(null);
+    } catch (e) {
+      console.error(e);
+      setError("Konnte die Antwort nicht senden. Bitte nochmal versuchen.");
+      setPending(null);
+    }
+  }
+
+  return (
+    <section className="mt-2 flex flex-1 flex-col gap-4">
+      <div className="font-display text-[10px] uppercase tracking-[0.2em] text-ink-muted">
+        Frage {index + 1} / {questions.length}
+      </div>
+      <h2 className="text-2xl font-semibold leading-tight sm:text-3xl">
+        {q.prompt}
+      </h2>
+      <span className="headline-accent" />
+
+      {currentAnswer ? (
+        <>
+          <div
+            className={`mt-3 flex flex-col gap-2 p-5 text-center ${
+              currentAnswer.isCorrect
+                ? "bg-accent/10 ring-2 ring-accent"
+                : "bg-rose-50 ring-2 ring-rose-500"
+            }`}
+          >
+            <div
+              className={`headline text-2xl ${
+                currentAnswer.isCorrect ? "text-accent" : "text-rose-600"
+              }`}
+            >
+              {currentAnswer.isCorrect ? "Richtig!" : "Leider falsch."}
+            </div>
+            {!currentAnswer.isCorrect && (
+              <div className="text-base">
+                Richtig wäre:{" "}
+                <span className="font-semibold">{currentAnswer.correct.label}</span>
+              </div>
+            )}
+          </div>
+          <button
+            onClick={() => setIndex(index + 1)}
+            className="mt-2 bg-brand px-5 py-4 text-lg font-medium text-white transition hover:bg-brand-dark"
+          >
+            {index + 1 < questions.length
+              ? "Nächste Frage →"
+              : "Ergebnis ansehen →"}
+          </button>
+        </>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {q.options.map((o) => (
+            <button
+              key={o.id}
+              onClick={() => submit(o)}
+              disabled={pending !== null}
+              className="flex min-h-[72px] w-full items-center justify-center bg-brand px-4 py-4 text-lg font-medium text-white transition active:scale-[0.98] hover:bg-brand-dark disabled:opacity-50"
+            >
+              {pending === o.id ? "Sende…" : o.label}
+            </button>
+          ))}
+          {error && (
+            <p className="mt-2 text-center text-sm text-rose-600">{error}</p>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}

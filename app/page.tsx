@@ -31,16 +31,12 @@ async function getStartTarget() {
 
   if (!game) return null;
 
-  const { data: q } = await sb
+  const { count } = await sb
     .from("questions")
-    .select("slug")
-    .eq("game_id", game.id)
-    .order("position", { ascending: true })
-    .limit(1)
-    .maybeSingle();
+    .select("id", { count: "exact", head: true })
+    .eq("game_id", game.id);
 
-  if (!q) return { game, slug: null as string | null };
-  return { game, slug: q.slug as string };
+  return { game, hasQuestions: (count ?? 0) > 0 };
 }
 
 export default async function Home() {
@@ -51,7 +47,9 @@ export default async function Home() {
   const proto = (h.get("x-forwarded-proto") ?? "http").split(",")[0];
   const baseUrl = `${proto}://${host}`;
 
-  const playUrl = target?.slug ? `${baseUrl}/play/${target.slug}` : null;
+  const playUrl = target?.hasQuestions
+    ? `${baseUrl}/quiz/${target.game.id}`
+    : null;
   const qr = playUrl ? await qrDataUrl(playUrl) : null;
 
   return (

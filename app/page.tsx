@@ -65,25 +65,26 @@ export default async function Home() {
           <div className="mx-auto grid max-w-6xl items-start gap-12 md:grid-cols-[1.1fr_1fr]">
             <div>
               <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-                Güntner · FFM 2026 · Marktstand
+                Güntner · FFM 2026 · Booth
               </p>
               <h1 className="headline mt-4 text-4xl leading-[1.15] md:text-5xl">
-                Hi! Lust auf ein<br />kleines Zahlenspiel?
+                Trockene Zahlen,<br />live geraten.
               </h1>
               <span className="headline-accent" />
               <p className="mt-8 max-w-md text-base leading-relaxed text-ink">
-                Acht Fragen aus dem Güntner-Konzern — Mitarbeiter, Umsätze und
-                Steuersätze von Brasilien bis Singapur. Spoiler: in China haben
-                wir <em>deutlich</em> weniger Leute, als du denkst.
+                Hi! Fancy a quick numbers game? Eight questions from inside the
+                Güntner Group — headcount, revenue and tax rates from Brazil to
+                Singapore. Spoiler: in China we have <em>far</em> fewer people
+                than you&apos;d guess.
               </p>
               <p className="mt-4 max-w-md text-base leading-relaxed text-ink-muted">
-                Schnapp dir dein Handy, scann den QR und tipp dich durch. Dauert
-                keine zwei Minuten — danach siehst du, wie nah du dran warst.
-                Komm gern danach an den Stand für die ganze Story.
+                Grab your phone, scan the QR and tap through. Under two
+                minutes — then you&apos;ll see how close you got. Drop by the
+                booth afterwards for the full story.
               </p>
               {target?.game && (
                 <p className="mt-6 font-display text-xs uppercase tracking-[0.18em] text-ink-muted">
-                  Aktuell: {target.game.name}
+                  Currently running: {target.game.name}
                   {target.game.status === "live" && (
                     <span className="ml-3 inline-block bg-accent px-2 py-0.5 text-[10px] text-white">
                       LIVE
@@ -97,7 +98,7 @@ export default async function Home() {
               <div className="relative aspect-[4/3] w-full overflow-hidden">
                 <Image
                   src="/InnovationStories.webp"
-                  alt="Blick in die Güntner-Produktion"
+                  alt="Inside Güntner production"
                   fill
                   sizes="(min-width: 768px) 50vw, 100vw"
                   className="object-cover"
@@ -110,7 +111,7 @@ export default async function Home() {
                   <div className="border border-slate-200 bg-white p-4 shadow-sm">
                     <Image
                       src={qr}
-                      alt="QR-Code zum Mitspielen"
+                      alt="QR code to play"
                       width={240}
                       height={240}
                       unoptimized
@@ -118,7 +119,7 @@ export default async function Home() {
                     />
                   </div>
                   <div className="font-display text-center text-xs uppercase tracking-[0.2em] text-ink-muted">
-                    Scann mich und leg los
+                    Scan me and play
                   </div>
                   <div className="break-all text-center font-mono text-[11px] text-ink-muted">
                     {playUrl}
@@ -127,11 +128,11 @@ export default async function Home() {
               ) : (
                 <div className="flex w-full flex-col items-center justify-center border border-dashed border-slate-300 bg-surface-muted p-8 text-center">
                   <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-                    Kein Spiel bereit
+                    No game ready
                   </p>
                   <p className="mt-3 text-sm text-ink-muted">
-                    Leg im Admin-Bereich ein Spiel mit mindestens einer Frage an,
-                    dann erscheint hier der QR-Code zum Mitspielen.
+                    Create a game with at least one question in the admin
+                    area — the QR code will appear here.
                   </p>
                 </div>
               )}
@@ -142,12 +143,12 @@ export default async function Home() {
 
       <footer className="border-t border-surface-muted bg-surface-muted px-8 py-5">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 text-xs text-ink-muted md:flex-row">
-          <span>© Güntner · Marktstand-Quiz · FFM 2026</span>
+          <span>© Güntner · Booth Quiz · FFM 2026</span>
           <Link
             href="/admin"
             className="font-display uppercase tracking-[0.18em] hover:text-brand"
           >
-            Admin-Bereich →
+            Admin →
           </Link>
         </div>
       </footer>

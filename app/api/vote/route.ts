@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   const questionId = typeof body.questionId === "string" ? body.questionId : "";
   const optionId = typeof body.optionId === "string" ? body.optionId : "";
   if (!questionId || !optionId) {
-    return NextResponse.json({ error: "questionId und optionId sind erforderlich." }, { status: 400 });
+    return NextResponse.json({ error: "questionId and optionId are required." }, { status: 400 });
   }
 
   const sb = supabaseAdmin();
@@ -29,10 +29,10 @@ export async function POST(req: Request) {
     .maybeSingle();
   if (optErr) {
     console.error(optErr);
-    return NextResponse.json({ error: "Server-Fehler" }, { status: 500 });
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
   if (!opt) {
-    return NextResponse.json({ error: "Option passt nicht zur Frage." }, { status: 400 });
+    return NextResponse.json({ error: "Option does not match this question." }, { status: 400 });
   }
 
   const { error: insErr } = await sb.from("votes").insert({
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
   });
   if (insErr) {
     console.error(insErr);
-    return NextResponse.json({ error: "Vote konnte nicht gespeichert werden." }, { status: 500 });
+    return NextResponse.json({ error: "Could not save vote." }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true });

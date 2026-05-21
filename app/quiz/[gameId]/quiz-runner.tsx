@@ -22,7 +22,7 @@ export function QuizRunner({ questions }: { questions: Q[] }) {
   if (questions.length === 0) {
     return (
       <section className="flex flex-1 flex-col items-center justify-center text-center text-ink-muted">
-        <p>Dieses Spiel hat noch keine Fragen.</p>
+        <p>This game doesn&apos;t have any questions yet.</p>
       </section>
     );
   }
@@ -33,13 +33,13 @@ export function QuizRunner({ questions }: { questions: Q[] }) {
       <section className="mt-2 flex flex-1 flex-col gap-5" aria-live="polite">
         <div className="flex flex-col items-center bg-surface-muted p-6 text-center">
           <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-            Dein Ergebnis
+            Your result
           </p>
           <p className="mt-2 text-5xl font-semibold text-brand">
             {correctCount}{" "}
             <span className="text-2xl text-ink-muted">/ {answers.length}</span>
           </p>
-          <p className="mt-1 text-sm text-ink-muted">richtig</p>
+          <p className="mt-1 text-sm text-ink-muted">correct</p>
         </div>
 
         <ol className="flex flex-col gap-3">
@@ -53,11 +53,11 @@ export function QuizRunner({ questions }: { questions: Q[] }) {
               }`}
             >
               <div className="font-display text-[10px] uppercase tracking-wider text-ink-muted">
-                Frage {i + 1}
+                Question {i + 1}
               </div>
               <div className="mt-1 font-medium">{a.prompt}</div>
               <div className="mt-2 text-sm">
-                <span className="text-ink-muted">Deine Antwort: </span>
+                <span className="text-ink-muted">Your answer: </span>
                 <span
                   className={
                     a.isCorrect
@@ -70,7 +70,7 @@ export function QuizRunner({ questions }: { questions: Q[] }) {
               </div>
               {!a.isCorrect && (
                 <div className="text-sm">
-                  <span className="text-ink-muted">Richtig wäre: </span>
+                  <span className="text-ink-muted">Correct answer: </span>
                   <span className="font-semibold text-ink">{a.correct.label}</span>
                 </div>
               )}
@@ -86,7 +86,7 @@ export function QuizRunner({ questions }: { questions: Q[] }) {
           }}
           className="mt-2 bg-brand px-5 py-3 text-base font-medium text-white transition hover:bg-brand-dark"
         >
-          Nochmal spielen
+          Play again
         </button>
       </section>
     );
@@ -118,7 +118,7 @@ export function QuizRunner({ questions }: { questions: Q[] }) {
       setPending(null);
     } catch (e) {
       console.error(e);
-      setError("Konnte die Antwort nicht senden. Bitte nochmal versuchen.");
+      setError("Couldn't send your answer. Please try again.");
       setPending(null);
     }
   }
@@ -126,7 +126,7 @@ export function QuizRunner({ questions }: { questions: Q[] }) {
   return (
     <section className="mt-2 flex flex-1 flex-col gap-4">
       <div className="font-display text-[10px] uppercase tracking-[0.2em] text-ink-muted">
-        Frage {index + 1} / {questions.length}
+        Question {index + 1} / {questions.length}
       </div>
       <h2 className="text-2xl font-semibold leading-tight sm:text-3xl">
         {q.prompt}
@@ -147,11 +147,11 @@ export function QuizRunner({ questions }: { questions: Q[] }) {
                 currentAnswer.isCorrect ? "text-accent" : "text-rose-600"
               }`}
             >
-              {currentAnswer.isCorrect ? "Richtig!" : "Leider falsch."}
+              {currentAnswer.isCorrect ? "Correct!" : "Not quite."}
             </div>
             {!currentAnswer.isCorrect && (
               <div className="text-base">
-                Richtig wäre:{" "}
+                Correct answer:{" "}
                 <span className="font-semibold">{currentAnswer.correct.label}</span>
               </div>
             )}
@@ -161,8 +161,8 @@ export function QuizRunner({ questions }: { questions: Q[] }) {
             className="mt-2 bg-brand px-5 py-4 text-lg font-medium text-white transition hover:bg-brand-dark"
           >
             {index + 1 < questions.length
-              ? "Nächste Frage →"
-              : "Ergebnis ansehen →"}
+              ? "Next question →"
+              : "See result →"}
           </button>
         </>
       ) : (
@@ -174,7 +174,7 @@ export function QuizRunner({ questions }: { questions: Q[] }) {
               disabled={pending !== null}
               className="flex min-h-[72px] w-full items-center justify-center bg-brand px-4 py-4 text-lg font-medium text-white transition active:scale-[0.98] hover:bg-brand-dark disabled:opacity-50"
             >
-              {pending === o.id ? "Sende…" : o.label}
+              {pending === o.id ? "Sending…" : o.label}
             </button>
           ))}
           {error && (

@@ -16,8 +16,8 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Güntner · FFM 2026 · Marktstand-Quiz",
-  description: "Live-Quiz am Güntner-Stand auf der FFM 2026.",
+  title: "Güntner · FFM 2026 · Booth Quiz",
+  description: "Live quiz at the Güntner booth, FFM 2026.",
 };
 
 export default function RootLayout({
@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="de"
+      lang="en"
       className={`${inter.variable} ${spaceMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-surface text-ink">{children}</body>

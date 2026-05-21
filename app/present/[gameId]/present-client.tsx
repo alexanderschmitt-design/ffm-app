@@ -120,7 +120,7 @@ export function PresentClient({ game, questions }: Props) {
   if (questions.length === 0) {
     return (
       <main className="flex min-h-dvh items-center justify-center bg-white text-ink">
-        <p className="text-2xl">Dieses Spiel hat noch keine Fragen.</p>
+        <p className="text-2xl">This game doesn&apos;t have any questions yet.</p>
       </main>
     );
   }
@@ -140,7 +140,7 @@ export function PresentClient({ game, questions }: Props) {
           </span>
         </div>
         <div className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-          Frage {index + 1} / {questions.length}
+          Question {index + 1} / {questions.length}
         </div>
       </header>
 
@@ -195,7 +195,7 @@ export function PresentClient({ game, questions }: Props) {
 
           {!revealed && (
             <div className="mt-2 text-2xl text-ink-muted">
-              Antworten eingegangen:{" "}
+              Answers received:{" "}
               <span className="font-mono text-3xl text-brand">{totalAnswers}</span>
             </div>
           )}
@@ -205,14 +205,14 @@ export function PresentClient({ game, questions }: Props) {
           <div className="border border-slate-200 bg-white p-3">
             <Image
               src={current.qrDataUrl}
-              alt="QR-Code zur Antwortseite"
+              alt="QR code to answer screen"
               width={320}
               height={320}
               unoptimized
             />
           </div>
           <div className="font-display text-center text-xs uppercase tracking-[0.18em] text-ink-muted">
-            Mit dem Handy scannen<br />und antworten
+            Scan with your phone<br />and answer
           </div>
           <div className="break-all text-center font-mono text-xs text-ink-muted">
             {current.playUrl}
@@ -224,9 +224,9 @@ export function PresentClient({ game, questions }: Props) {
         <div className="font-display text-xs uppercase tracking-[0.18em]">
           <kbd className="border border-slate-300 bg-white px-2 py-1">←</kbd>{" "}
           <kbd className="border border-slate-300 bg-white px-2 py-1">→</kbd>{" "}
-          Frage wechseln &middot;{" "}
+          Change question &middot;{" "}
           <kbd className="border border-slate-300 bg-white px-2 py-1">Space</kbd>{" "}
-          auflösen
+          reveal
         </div>
         <div className="flex gap-3">
           <button
@@ -234,7 +234,7 @@ export function PresentClient({ game, questions }: Props) {
             disabled={index === 0}
             className="border border-slate-300 bg-white px-5 py-2 hover:border-brand hover:text-brand disabled:opacity-40"
           >
-            ← Zurück
+            ← Back
           </button>
           <button
             onClick={toggleReveal}
@@ -244,14 +244,14 @@ export function PresentClient({ game, questions }: Props) {
                 : "bg-accent text-white hover:bg-accent/85"
             }`}
           >
-            {revealed ? "Verbergen" : "Auflösen"}
+            {revealed ? "Hide" : "Reveal"}
           </button>
           <button
             onClick={next}
             disabled={index === questions.length - 1}
             className="bg-brand px-5 py-2 text-white hover:bg-brand-dark disabled:opacity-40"
           >
-            Weiter →
+            Next →
           </button>
         </div>
       </footer>

@@ -26,7 +26,7 @@ export function AnswerButtons({ questionId, options }: { questionId: string; opt
       setResult({ picked: option, correct });
     } catch (e) {
       console.error(e);
-      setError("Konnte die Antwort nicht senden. Bitte nochmal versuchen.");
+      setError("Couldn't send your answer. Please try again.");
       setPending(null);
     }
   }
@@ -47,16 +47,16 @@ export function AnswerButtons({ questionId, options }: { questionId: string; opt
             isRight ? "text-accent" : "text-rose-600"
           }`}
         >
-          {isRight ? "Richtig!" : "Leider falsch."}
+          {isRight ? "Correct!" : "Not quite."}
         </div>
         {!isRight && (
           <div className="text-base text-ink">
-            Richtig wäre gewesen:
+            The correct answer was:
             <div className="mt-2 text-xl font-semibold">{result.correct.label}</div>
           </div>
         )}
         <div className="text-sm text-ink-muted">
-          Schau auf den Bildschirm am Stand — gleich geht&apos;s weiter.
+          Watch the booth screen — we&apos;ll move on shortly.
         </div>
       </section>
     );
@@ -71,7 +71,7 @@ export function AnswerButtons({ questionId, options }: { questionId: string; opt
           disabled={pending !== null}
           className="flex min-h-[88px] w-full items-center justify-center bg-brand px-4 py-4 text-xl font-medium text-white transition active:scale-[0.98] hover:bg-brand-dark disabled:opacity-50"
         >
-          {pending === o.id ? "Sende…" : o.label}
+          {pending === o.id ? "Sending…" : o.label}
         </button>
       ))}
       {error && <p className="mt-2 text-center text-sm text-rose-600">{error}</p>}

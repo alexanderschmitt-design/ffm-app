@@ -1,11 +1,13 @@
--- Tax Sudoku — FFM 2026 Marktstand
--- Hängt 8 spielerische Multiple-Choice-Fragen ans vorhandene
--- "FFM 2026"-Spiel an (gefunden per Name). Jede Frage hat genau eine
--- richtige Antwort + zwei plausible Ablenker (meist Faktor 10 daneben).
--- Quelle der Werte: public/Sudoku Game.xlsx (CbCR-Tabelle).
+-- Tax Sudoku — FFM 2026 booth
+-- Appends 8 playful multiple-choice questions to the existing
+-- "FFM 2026" game (matched by name). Each question has exactly one
+-- correct answer and two plausible distractors (typically off by a
+-- factor of 10).
+-- Source data: public/Sudoku Game.xlsx (CbCR table).
 --
--- Idempotent: nutzt feste Slugs mit ON CONFLICT, kann also gefahrlos
--- erneut ausgeführt werden.
+-- Idempotent: uses stable slugs with ON CONFLICT, safe to re-run.
+-- Tip: re-run this after pulling the English UI translation to
+-- replace the older German prompts/labels in the database.
 
 do $$
 declare
@@ -21,7 +23,7 @@ begin
   limit 1;
 
   if v_game_id is null then
-    raise exception 'Kein FFM-2026-Spiel gefunden. Bitte zuerst im Admin anlegen.';
+    raise exception 'No FFM 2026 game found. Please create one in the admin area first.';
   end if;
 
   select coalesce(max(position), -1) + 1 into v_pos
@@ -29,86 +31,93 @@ begin
 
   insert into public.questions (game_id, slug, position, prompt) values
     (v_game_id, 'tax-china-fte', v_pos,
-     'China hat 1,4 Milliarden Einwohner. Wie viele davon arbeiten Vollzeit bei Güntner China?')
+     'China has 1.4 billion people. How many of them work full-time at Güntner China?')
   on conflict (slug) do update set prompt = excluded.prompt, position = excluded.position
   returning id into v_q1;
 
   insert into public.questions (game_id, slug, position, prompt) values
     (v_game_id, 'tax-usa-fte', v_pos + 1,
-     'USA: Land der unbegrenzten Möglichkeiten und 89,6 Mio. € Umsatz. Mit wie vielen Köpfen wuppt Güntner das?')
+     'USA: land of opportunity, €89.6m in revenue. How many people pull that off at Güntner?')
   on conflict (slug) do update set prompt = excluded.prompt, position = excluded.position
   returning id into v_q2;
 
   insert into public.questions (game_id, slug, position, prompt) values
     (v_game_id, 'tax-mexico-rate', v_pos + 2,
-     'Mexiko: Auf jeden 100-€-Gewinn — wie viel überweist Güntner an die Hacienda?')
+     'Mexico: on every €100 of profit — how much does Güntner pay to Hacienda?')
   on conflict (slug) do update set prompt = excluded.prompt, position = excluded.position
   returning id into v_q3;
 
   insert into public.questions (game_id, slug, position, prompt) values
     (v_game_id, 'tax-romania-rate', v_pos + 3,
-     'Rumänien — EU-Mitglied mit Spar-Steuersatz. Was zahlt Güntner an Bukarest?')
+     'Romania — EU member, bargain corporate tax rate. What does Güntner pay to Bucharest?')
   on conflict (slug) do update set prompt = excluded.prompt, position = excluded.position
   returning id into v_q4;
 
   insert into public.questions (game_id, slug, position, prompt) values
     (v_game_id, 'tax-germany-revenue', v_pos + 4,
-     'Deutschland — Heimspiel. Wie viel Umsatz fährt Güntner hier pro Jahr ein?')
+     'Germany — home turf. What is Güntner''s annual revenue here?')
   on conflict (slug) do update set prompt = excluded.prompt, position = excluded.position
   returning id into v_q5;
 
   insert into public.questions (game_id, slug, position, prompt) values
     (v_game_id, 'tax-uae-capital', v_pos + 5,
-     'Dubai: Wolkenkratzer, Wüste, Werte. Mit welchem Stammkapital startet Güntner in den VAE?')
+     'Dubai: skyscrapers, desert, share capital. What stated capital did Güntner start with in the UAE?')
   on conflict (slug) do update set prompt = excluded.prompt, position = excluded.position
   returning id into v_q6;
 
   insert into public.questions (game_id, slug, position, prompt) values
     (v_game_id, 'tax-indonesia-profit', v_pos + 6,
-     'Indonesien: 17.000 Inseln, 102,5 Mio. € Umsatz. Wie viel bleibt davon vor Steuern hängen?')
+     'Indonesia: 17,000 islands, €102.5m in revenue. How much of that ends up as pre-tax profit?')
   on conflict (slug) do update set prompt = excluded.prompt, position = excluded.position
   returning id into v_q7;
 
   insert into public.questions (game_id, slug, position, prompt) values
     (v_game_id, 'tax-brazil-profit', v_pos + 7,
-     'Brasilien: Karneval, Caipirinha, Kalkulation. Bei 21,5 Mio. € Umsatz — wie viel Gewinn vor Steuern?')
+     'Brazil: carnival, caipirinha, calculations. At €21.5m revenue — how much pre-tax profit?')
   on conflict (slug) do update set prompt = excluded.prompt, position = excluded.position
   returning id into v_q8;
 
-  -- Bei Re-Run: alte Antwortoptionen wegräumen, dann neu setzen.
   delete from public.answer_options where question_id in
     (v_q1, v_q2, v_q3, v_q4, v_q5, v_q6, v_q7, v_q8);
 
   insert into public.answer_options (question_id, label, is_correct, position) values
-    (v_q1, '6',    true,  0),
-    (v_q1, '60',   false, 1),
-    (v_q1, '600',  false, 2),
+    -- China FTE: 6
+    (v_q1, '6',   true,  0),
+    (v_q1, '60',  false, 1),
+    (v_q1, '600', false, 2),
 
+    -- USA FTE: 14
     (v_q2, '14',    true,  0),
     (v_q2, '140',   false, 1),
-    (v_q2, '1.400', false, 2),
+    (v_q2, '1,400', false, 2),
 
-    (v_q3, '17 €', false, 0),
-    (v_q3, '30 €', true,  1),
-    (v_q3, '45 €', false, 2),
+    -- Mexico tax rate: 30%
+    (v_q3, '€17', false, 0),
+    (v_q3, '€30', true,  1),
+    (v_q3, '€45', false, 2),
 
-    (v_q4, '9 %',  false, 0),
-    (v_q4, '16 %', true,  1),
-    (v_q4, '25 %', false, 2),
+    -- Romania tax rate: 16%
+    (v_q4, '9%',  false, 0),
+    (v_q4, '16%', true,  1),
+    (v_q4, '25%', false, 2),
 
-    (v_q5, '35,9 Mio. €',  false, 0),
-    (v_q5, '359,5 Mio. €', true,  1),
-    (v_q5, '3,6 Mrd. €',   false, 2),
+    -- Germany revenue: €359.5m
+    (v_q5, '€35.9m',  false, 0),
+    (v_q5, '€359.5m', true,  1),
+    (v_q5, '€3.6bn',  false, 2),
 
-    (v_q6, '20.000 €',    true,  0),
-    (v_q6, '200.000 €',   false, 1),
-    (v_q6, '2.000.000 €', false, 2),
+    -- UAE stated capital: €20,000
+    (v_q6, '€20,000',    true,  0),
+    (v_q6, '€200,000',   false, 1),
+    (v_q6, '€2,000,000', false, 2),
 
-    (v_q7, '460.000 €',  false, 0),
-    (v_q7, '4,6 Mio. €', true,  1),
-    (v_q7, '46 Mio. €',  false, 2),
+    -- Indonesia pre-tax profit: €4.6m
+    (v_q7, '€460,000', false, 0),
+    (v_q7, '€4.6m',    true,  1),
+    (v_q7, '€46m',     false, 2),
 
-    (v_q8, '69.000 €',   false, 0),
-    (v_q8, '690.000 €',  true,  1),
-    (v_q8, '6,9 Mio. €', false, 2);
+    -- Brazil pre-tax profit: €690,000
+    (v_q8, '€69,000',  false, 0),
+    (v_q8, '€690,000', true,  1),
+    (v_q8, '€6.9m',    false, 2);
 end $$;

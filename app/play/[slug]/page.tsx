@@ -18,7 +18,7 @@ export default async function PlayPage(props: PageProps<"/play/[slug]">) {
   const { data, error } = await sb.rpc("get_question_by_slug", { p_slug: slug });
   if (error) {
     console.error(error);
-    throw new Error("Frage konnte nicht geladen werden.");
+    throw new Error("Could not load question.");
   }
   const row = (data ?? [])[0] as
     | { question_id: string; game_id: string; prompt: string; options_json: Option[] }
@@ -32,7 +32,7 @@ export default async function PlayPage(props: PageProps<"/play/[slug]">) {
       <header className="mb-5 border-b border-slate-200 pb-4">
         <GuentnerMark className="h-10 w-auto" />
         <p className="mt-3 font-display text-[10px] uppercase tracking-[0.25em] text-brand">
-          FFM 2026 · Marktstand
+          FFM 2026 · Booth
         </p>
         <h1 className="mt-3 text-2xl font-semibold leading-tight sm:text-3xl">
           {row.prompt}
@@ -41,7 +41,7 @@ export default async function PlayPage(props: PageProps<"/play/[slug]">) {
       </header>
       <AnswerButtons questionId={row.question_id} options={options} />
       <footer className="mt-6 text-center text-xs text-ink-muted">
-        Tipp einfach eine Antwort an &mdash; die Auflösung siehst du gleich am Stand.
+        Tap an answer &mdash; the reveal happens on the booth screen.
       </footer>
     </main>
   );

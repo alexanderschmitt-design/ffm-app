@@ -1,6 +1,6 @@
 -- Multi-booth support: each department gets its own landing page and admin.
 -- Adds a booths table, links games to a booth, and seeds a default "tax"
--- booth for the existing FFM 2026 game(s).
+-- booth for the existing FMM 2026 game(s).
 
 create table public.booths (
   id          uuid primary key default gen_random_uuid(),
@@ -11,7 +11,7 @@ create table public.booths (
 );
 
 insert into public.booths (slug, name, tagline) values
-  ('tax', 'Tax · FFM 2026', 'Eight playful questions about Güntner''s global numbers.');
+  ('tax', 'Tax · FMM 2026', 'Eight playful questions about Güntner''s global numbers.');
 
 alter table public.games add column booth_id uuid references public.booths(id);
 

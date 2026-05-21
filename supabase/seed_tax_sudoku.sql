@@ -1,6 +1,6 @@
--- Tax Sudoku — FFM 2026 booth
+-- Tax Sudoku — FMM 2026 booth
 -- Appends 8 playful multiple-choice questions to the existing
--- "FFM 2026" game (matched by name). Each question has exactly one
+-- "FMM 2026" game (matched by name). Each question has exactly one
 -- correct answer and two plausible distractors (typically off by a
 -- factor of 10).
 -- Source data: public/Sudoku Game.xlsx (CbCR table).

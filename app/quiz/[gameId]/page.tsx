@@ -51,7 +51,7 @@ export default async function QuizPage(props: PageProps<"/quiz/[gameId]">) {
       <header className="mb-5 border-b border-slate-200 pb-4">
         <GuentnerMark className="h-10 w-auto" />
         <p className="mt-3 font-display text-[10px] uppercase tracking-[0.25em] text-brand">
-          FFM 2026 · Booth
+          FMM 2026 · Booth
         </p>
         <h1 className="mt-3 text-xl font-semibold leading-tight sm:text-2xl">
           {game.name}

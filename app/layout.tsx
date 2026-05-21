@@ -16,8 +16,8 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Güntner · FFM 2026 · Booth Quiz",
-  description: "Live quiz at the Güntner booth, FFM 2026.",
+  title: "Güntner · FMM 2026 · Booth Quiz",
+  description: "Live quiz at the Güntner booth, FMM 2026.",
 };
 
 export default function RootLayout({

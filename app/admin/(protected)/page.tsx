@@ -59,7 +59,7 @@ export default async function AdminGamesList() {
           <input
             name="name"
             required
-            placeholder="z.B. Tax Sudoku — FFM 2026"
+            placeholder="z.B. Tax Sudoku — FMM 2026"
             className="flex-1 border border-slate-300 px-3 py-2.5 outline-none focus:border-brand"
           />
           <button

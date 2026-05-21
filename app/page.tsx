@@ -25,10 +25,10 @@ export default async function Home() {
         <section className="bg-white px-8 py-20">
           <div className="mx-auto max-w-3xl">
             <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-              Güntner · FFM 2026
+              Güntner · FMM 2026
             </p>
             <h1 className="headline mt-4 text-4xl leading-[1.15] md:text-5xl">
-              Trockene Zahlen,<br />live geraten.
+              Güntner Company Market
             </h1>
             <span className="headline-accent" />
             <p className="mt-8 max-w-xl text-base leading-relaxed text-ink-muted">
@@ -73,7 +73,7 @@ export default async function Home() {
 
       <footer className="border-t border-surface-muted bg-surface-muted px-8 py-5">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 text-xs text-ink-muted md:flex-row">
-          <span>© Güntner · Booth Quiz · FFM 2026</span>
+          <span>© Güntner · Booth Quiz · FMM 2026</span>
           <Link
             href="/admin"
             className="font-display uppercase tracking-[0.18em] hover:text-brand"

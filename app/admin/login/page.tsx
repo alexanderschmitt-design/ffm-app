@@ -1,13 +1,19 @@
 import { redirect } from "next/navigation";
 import { isAdmin, loginWithPassword } from "@/lib/auth";
 import { GuentnerLogo } from "@/app/brand";
+import { supabaseAdmin } from "@/lib/supabase/server";
+import type { Booth } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 async function loginAction(formData: FormData) {
   "use server";
+  const slug = String(formData.get("booth") ?? "").trim();
   const pw = String(formData.get("password") ?? "");
-  const ok = await loginWithPassword(pw);
+  if (!slug) {
+    redirect("/admin/login?error=1");
+  }
+  const ok = await loginWithPassword(slug, pw);
   if (!ok) {
     redirect("/admin/login?error=1");
   }
@@ -19,11 +25,18 @@ export default async function LoginPage(props: PageProps<"/admin/login">) {
   const sp = await props.searchParams;
   const showError = sp?.error === "1";
 
+  const sb = supabaseAdmin();
+  const { data } = await sb
+    .from("booths")
+    .select("*")
+    .order("created_at", { ascending: true });
+  const booths = (data ?? []) as Booth[];
+
   return (
     <main className="flex min-h-dvh flex-col bg-surface-muted">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-8 py-5">
-          <GuentnerLogo subline="FFM 2026 · Marktstand-Quiz" />
+          <GuentnerLogo subline="FFM 2026 · Booth Quiz" />
         </div>
       </header>
       <div className="flex flex-1 items-center justify-center p-6">
@@ -36,8 +49,28 @@ export default async function LoginPage(props: PageProps<"/admin/login">) {
             <span className="headline-accent" />
           </div>
           <p className="text-sm text-ink-muted">
-            Zum Verwalten der Spiele und Fragen.
+            Wähle deinen Stand und gib dein Stand-Passwort ein.
           </p>
+          <label className="block">
+            <span className="mb-2 block text-xs font-medium uppercase tracking-wider text-ink-muted">
+              Stand
+            </span>
+            <select
+              name="booth"
+              required
+              defaultValue=""
+              className="w-full border border-slate-300 bg-white px-3 py-2.5 outline-none focus:border-brand"
+            >
+              <option value="" disabled>
+                Stand wählen…
+              </option>
+              {booths.map((b) => (
+                <option key={b.id} value={b.slug}>
+                  {b.name}
+                </option>
+              ))}
+            </select>
+          </label>
           <label className="block">
             <span className="mb-2 block text-xs font-medium uppercase tracking-wider text-ink-muted">
               Passwort
@@ -51,7 +84,9 @@ export default async function LoginPage(props: PageProps<"/admin/login">) {
             />
           </label>
           {showError && (
-            <p className="text-sm text-rose-600">Falsches Passwort.</p>
+            <p className="text-sm text-rose-600">
+              Falsches Passwort oder unbekannter Stand.
+            </p>
           )}
           <button
             type="submit"

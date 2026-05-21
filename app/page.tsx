@@ -1,56 +1,17 @@
-import Image from "next/image";
 import Link from "next/link";
-import { headers } from "next/headers";
 import { GuentnerLogo } from "./brand";
 import { supabaseAdmin } from "@/lib/supabase/server";
-import { qrDataUrl } from "@/lib/qr";
+import type { Booth } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-async function getStartTarget() {
-  const sb = supabaseAdmin();
-
-  const { data: live } = await sb
-    .from("games")
-    .select("id, name, status")
-    .eq("status", "live")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  const game =
-    live ??
-    (
-      await sb
-        .from("games")
-        .select("id, name, status")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle()
-    ).data;
-
-  if (!game) return null;
-
-  const { count } = await sb
-    .from("questions")
-    .select("id", { count: "exact", head: true })
-    .eq("game_id", game.id);
-
-  return { game, hasQuestions: (count ?? 0) > 0 };
-}
-
 export default async function Home() {
-  const target = await getStartTarget();
-
-  const h = await headers();
-  const host = h.get("host") ?? "localhost:3000";
-  const proto = (h.get("x-forwarded-proto") ?? "http").split(",")[0];
-  const baseUrl = `${proto}://${host}`;
-
-  const playUrl = target?.hasQuestions
-    ? `${baseUrl}/quiz/${target.game.id}`
-    : null;
-  const qr = playUrl ? await qrDataUrl(playUrl) : null;
+  const sb = supabaseAdmin();
+  const { data } = await sb
+    .from("booths")
+    .select("*")
+    .order("created_at", { ascending: true });
+  const booths = (data ?? []) as Booth[];
 
   return (
     <>
@@ -62,81 +23,50 @@ export default async function Home() {
 
       <main className="flex flex-1 flex-col">
         <section className="bg-white px-8 py-20">
-          <div className="mx-auto grid max-w-6xl items-start gap-12 md:grid-cols-[1.1fr_1fr]">
-            <div>
-              <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-                Güntner · FFM 2026 · Booth
-              </p>
-              <h1 className="headline mt-4 text-4xl leading-[1.15] md:text-5xl">
-                Trockene Zahlen,<br />live geraten.
-              </h1>
-              <span className="headline-accent" />
-              <p className="mt-8 max-w-md text-base leading-relaxed text-ink">
-                Hi! Fancy a quick numbers game? Eight questions from inside the
-                Güntner Group — headcount, revenue and tax rates from Brazil to
-                Singapore. Spoiler: in China we have <em>far</em> fewer people
-                than you&apos;d guess.
-              </p>
-              <p className="mt-4 max-w-md text-base leading-relaxed text-ink-muted">
-                Grab your phone, scan the QR and tap through. Under two
-                minutes — then you&apos;ll see how close you got. Drop by the
-                booth afterwards for the full story.
-              </p>
-              {target?.game && (
-                <p className="mt-6 font-display text-xs uppercase tracking-[0.18em] text-ink-muted">
-                  Currently running: {target.game.name}
-                  {target.game.status === "live" && (
-                    <span className="ml-3 inline-block bg-accent px-2 py-0.5 text-[10px] text-white">
-                      LIVE
-                    </span>
-                  )}
-                </p>
-              )}
-            </div>
+          <div className="mx-auto max-w-3xl">
+            <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
+              Güntner · FFM 2026
+            </p>
+            <h1 className="headline mt-4 text-4xl leading-[1.15] md:text-5xl">
+              Trockene Zahlen,<br />live geraten.
+            </h1>
+            <span className="headline-accent" />
+            <p className="mt-8 max-w-xl text-base leading-relaxed text-ink-muted">
+              Pick the booth you&apos;re at — or use the QR code printed on the
+              wall to jump straight into the right quiz.
+            </p>
 
-            <div className="flex flex-col gap-6">
-              <div className="relative aspect-[4/3] w-full overflow-hidden">
-                <Image
-                  src="/InnovationStories.webp"
-                  alt="Inside Güntner production"
-                  fill
-                  sizes="(min-width: 768px) 50vw, 100vw"
-                  className="object-cover"
-                  priority
-                />
-              </div>
-
-              {qr && playUrl ? (
-                <div className="flex flex-col items-center gap-3">
-                  <div className="border border-slate-200 bg-white p-4 shadow-sm">
-                    <Image
-                      src={qr}
-                      alt="QR code to play"
-                      width={240}
-                      height={240}
-                      unoptimized
-                      priority
-                    />
-                  </div>
-                  <div className="font-display text-center text-xs uppercase tracking-[0.2em] text-ink-muted">
-                    Scan me and play
-                  </div>
-                  <div className="break-all text-center font-mono text-[11px] text-ink-muted">
-                    {playUrl}
-                  </div>
-                </div>
-              ) : (
-                <div className="flex w-full flex-col items-center justify-center border border-dashed border-slate-300 bg-surface-muted p-8 text-center">
-                  <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-                    No game ready
-                  </p>
-                  <p className="mt-3 text-sm text-ink-muted">
-                    Create a game with at least one question in the admin
-                    area — the QR code will appear here.
-                  </p>
-                </div>
-              )}
-            </div>
+            {booths.length === 0 ? (
+              <p className="mt-10 text-sm text-ink-muted">
+                No booths configured yet.
+              </p>
+            ) : (
+              <ul className="mt-10 grid gap-4 sm:grid-cols-2">
+                {booths.map((b) => (
+                  <li key={b.id}>
+                    <Link
+                      href={`/booth/${b.slug}`}
+                      className="block border border-slate-200 bg-white p-6 transition hover:border-brand hover:shadow-sm"
+                    >
+                      <p className="font-display text-[10px] uppercase tracking-[0.2em] text-ink-muted">
+                        /booth/{b.slug}
+                      </p>
+                      <h2 className="mt-2 text-xl font-semibold text-ink">
+                        {b.name}
+                      </h2>
+                      {b.tagline && (
+                        <p className="mt-2 text-sm text-ink-muted">
+                          {b.tagline}
+                        </p>
+                      )}
+                      <p className="mt-4 font-display text-xs uppercase tracking-[0.18em] text-brand">
+                        Open booth →
+                      </p>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </section>
       </main>

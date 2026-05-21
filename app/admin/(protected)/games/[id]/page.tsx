@@ -3,17 +3,39 @@ import { notFound, redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
+import { adminBoothSlug } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { qrDataUrl } from "@/lib/qr";
 import type { Game, Question, AnswerOption } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
+// Verifies the currently authenticated admin owns the booth that owns this game.
+// Throws on mismatch so tampered form submissions can't cross-mutate booths.
+async function assertAdminOwnsGame(gameId: string): Promise<void> {
+  const slug = await adminBoothSlug();
+  if (!slug) throw new Error("Not authenticated");
+  const sb = supabaseAdmin();
+  const { data: booth } = await sb
+    .from("booths")
+    .select("id")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (!booth) throw new Error("Booth not found");
+  const { data: game } = await sb
+    .from("games")
+    .select("booth_id")
+    .eq("id", gameId)
+    .maybeSingle();
+  if (!game || game.booth_id !== booth.id) throw new Error("Forbidden");
+}
+
 async function deleteQuestion(formData: FormData) {
   "use server";
   const id = String(formData.get("id") ?? "");
   const gameId = String(formData.get("gameId") ?? "");
   if (!id || !gameId) return;
+  await assertAdminOwnsGame(gameId);
   const sb = supabaseAdmin();
   await sb.from("questions").delete().eq("id", id);
   revalidatePath(`/admin/games/${gameId}`);
@@ -23,6 +45,7 @@ async function deleteGame(formData: FormData) {
   "use server";
   const gameId = String(formData.get("gameId") ?? "");
   if (!gameId) return;
+  await assertAdminOwnsGame(gameId);
   const sb = supabaseAdmin();
   await sb.from("games").delete().eq("id", gameId);
   redirect("/admin");
@@ -39,6 +62,7 @@ async function addQuestion(formData: FormData) {
   if (!gameId || !prompt || labels.some((l) => !l) || ![0, 1, 2].includes(correctIndex)) {
     return;
   }
+  await assertAdminOwnsGame(gameId);
 
   const sb = supabaseAdmin();
   const { data: existing } = await sb
@@ -91,6 +115,7 @@ async function updateQuestion(formData: FormData) {
   ) {
     return;
   }
+  await assertAdminOwnsGame(gameId);
 
   const sb = supabaseAdmin();
 
@@ -132,13 +157,23 @@ export default async function AdminGameEditor(props: PageProps<"/admin/games/[id
   const editingId =
     typeof searchParams?.edit === "string" ? searchParams.edit : null;
 
+  const adminSlug = await adminBoothSlug();
+  if (!adminSlug) redirect("/admin/login");
+
   const sb = supabaseAdmin();
+  const { data: adminBooth } = await sb
+    .from("booths")
+    .select("id")
+    .eq("slug", adminSlug)
+    .maybeSingle();
+  if (!adminBooth) redirect("/admin/login");
 
   const [{ data: game }, { data: questions }] = await Promise.all([
     sb.from("games").select("*").eq("id", id).maybeSingle(),
     sb.from("questions").select("*").eq("game_id", id).order("position", { ascending: true }),
   ]);
-  if (!game) notFound();
+  // 404 also when game exists but belongs to another booth — don't leak existence.
+  if (!game || game.booth_id !== adminBooth.id) notFound();
   const qs = (questions ?? []) as Question[];
 
   const ids = qs.map((q) => q.id);

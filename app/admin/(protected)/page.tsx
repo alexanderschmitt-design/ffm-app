@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { adminBoothSlug } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import type { Game } from "@/lib/types";
 
@@ -9,10 +10,21 @@ async function createGameAction(formData: FormData) {
   "use server";
   const name = String(formData.get("name") ?? "").trim();
   if (!name) return;
+
+  const slug = await adminBoothSlug();
+  if (!slug) redirect("/admin/login");
+
   const sb = supabaseAdmin();
+  const { data: booth } = await sb
+    .from("booths")
+    .select("id")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (!booth) redirect("/admin/login");
+
   const { data, error } = await sb
     .from("games")
-    .insert({ name })
+    .insert({ name, booth_id: booth.id })
     .select("id")
     .single();
   if (error) throw new Error(error.message);
@@ -20,10 +32,21 @@ async function createGameAction(formData: FormData) {
 }
 
 export default async function AdminGamesList() {
+  const slug = await adminBoothSlug();
+  if (!slug) redirect("/admin/login");
+
   const sb = supabaseAdmin();
+  const { data: booth } = await sb
+    .from("booths")
+    .select("id")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (!booth) redirect("/admin/login");
+
   const { data } = await sb
     .from("games")
     .select("*")
+    .eq("booth_id", booth.id)
     .order("created_at", { ascending: false });
   const games = (data ?? []) as Game[];
 
@@ -36,7 +59,7 @@ export default async function AdminGamesList() {
           <input
             name="name"
             required
-            placeholder="z.B. FFM 2026 · Marktstand"
+            placeholder="z.B. Tax Sudoku — FFM 2026"
             className="flex-1 border border-slate-300 px-3 py-2.5 outline-none focus:border-brand"
           />
           <button
@@ -52,7 +75,7 @@ export default async function AdminGamesList() {
         <h2 className="headline text-lg">Vorhandene Spiele</h2>
         <span className="headline-accent mb-5" />
         {games.length === 0 ? (
-          <p className="mt-4 text-ink-muted">Noch keine Spiele vorhanden.</p>
+          <p className="mt-4 text-ink-muted">Noch keine Spiele für diesen Stand.</p>
         ) : (
           <ul className="mt-5 divide-y divide-slate-200 overflow-hidden bg-white ring-1 ring-slate-200">
             {games.map((g) => (

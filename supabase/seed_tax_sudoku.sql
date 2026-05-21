@@ -16,14 +16,16 @@ declare
   v_q1 uuid; v_q2 uuid; v_q3 uuid; v_q4 uuid;
   v_q5 uuid; v_q6 uuid; v_q7 uuid; v_q8 uuid;
 begin
-  select id into v_game_id
-  from public.games
-  where name ilike '%FFM 2026%'
-  order by created_at desc
+  -- Pick the newest game belonging to the "tax" booth.
+  select g.id into v_game_id
+  from public.games g
+  join public.booths b on b.id = g.booth_id
+  where b.slug = 'tax'
+  order by g.created_at desc
   limit 1;
 
   if v_game_id is null then
-    raise exception 'No FFM 2026 game found. Please create one in the admin area first.';
+    raise exception 'No game found for the "tax" booth. Please create one in the admin area first.';
   end if;
 
   select coalesce(max(position), -1) + 1 into v_pos

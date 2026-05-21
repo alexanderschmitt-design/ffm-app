@@ -1,11 +1,20 @@
 export type GameStatus = "draft" | "live" | "finished";
 
+export type Booth = {
+  id: string;
+  slug: string;
+  name: string;
+  tagline: string | null;
+  created_at: string;
+};
+
 export type Game = {
   id: string;
   name: string;
   status: GameStatus;
   current_question_id: string | null;
   reveal_active: boolean;
+  booth_id: string;
   created_at: string;
 };
 

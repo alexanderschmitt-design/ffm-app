@@ -10,7 +10,11 @@ import type { ReactNode } from "react";
 
 export const dynamic = "force-dynamic";
 
-type BoothCopy = { headline: ReactNode; intro: ReactNode };
+type BoothCopy = {
+  headline: ReactNode;
+  intro: ReactNode;
+  image: { src: string; alt: string; aspectClass: string };
+};
 
 const BOOTH_COPY: Record<string, BoothCopy> = {
   tax: {
@@ -28,11 +32,16 @@ const BOOTH_COPY: Record<string, BoothCopy> = {
         look completely different than you expect.
       </>
     ),
+    image: {
+      src: "/InnovationStories.webp",
+      alt: "Inside Güntner production",
+      aspectClass: "aspect-[4/3]",
+    },
   },
   gpc: {
     headline: (
       <>
-        Test your Güntner<br />product knowledge.
+        Test your Product Knowledge.
       </>
     ),
     intro: (
@@ -44,6 +53,11 @@ const BOOTH_COPY: Record<string, BoothCopy> = {
         reshaping the way we configure Güntner products.
       </>
     ),
+    image: {
+      src: "/myGPC-Home.png",
+      alt: "myGPC product configurator home screen",
+      aspectClass: "aspect-[16/10]",
+    },
   },
 };
 
@@ -155,10 +169,12 @@ export default async function BoothLandingPage(
             </div>
 
             <div className="flex flex-col gap-6">
-              <div className="relative aspect-[4/3] w-full overflow-hidden">
+              <div
+                className={`relative w-full overflow-hidden ${copy.image.aspectClass}`}
+              >
                 <Image
-                  src="/InnovationStories.webp"
-                  alt="Inside Güntner production"
+                  src={copy.image.src}
+                  alt={copy.image.alt}
                   fill
                   sizes="(min-width: 768px) 50vw, 100vw"
                   className="object-cover"

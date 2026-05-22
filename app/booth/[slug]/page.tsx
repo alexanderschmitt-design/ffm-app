@@ -11,6 +11,7 @@ import type { ReactNode } from "react";
 export const dynamic = "force-dynamic";
 
 type BoothCopy = {
+  kicker: string;
   headline: ReactNode;
   intro: ReactNode;
   image: { src: string; alt: string; aspectClass: string };
@@ -18,6 +19,7 @@ type BoothCopy = {
 
 const BOOTH_COPY: Record<string, BoothCopy> = {
   tax: {
+    kicker: "Güntner Company Market 2026",
     headline: (
       <>
         Test Your Güntner Pulse —<br />A Quick Executive Challenge
@@ -39,6 +41,7 @@ const BOOTH_COPY: Record<string, BoothCopy> = {
     },
   },
   gpc: {
+    kicker: "GPC · FMM 2026",
     headline: (
       <>
         Test your Product Knowledge.
@@ -138,7 +141,7 @@ export default async function BoothLandingPage(
           <div className="mx-auto grid max-w-6xl items-start gap-12 md:grid-cols-[1.1fr_1fr]">
             <div>
               <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-                Güntner Company Market 2026
+                {copy.kicker}
               </p>
               <h1 className="headline mt-4 text-4xl leading-[1.15] md:text-5xl">
                 {copy.headline}

@@ -73,7 +73,7 @@ export default async function Home() {
 
       <footer className="border-t border-surface-muted bg-surface-muted px-8 py-5">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 text-xs text-ink-muted md:flex-row">
-          <span>© Güntner · Booth Quiz · FMM 2026</span>
+          <span>Copyright © 2026 Güntner GmbH &amp; Co. KG</span>
           <Link
             href="/admin"
             className="font-display uppercase tracking-[0.18em] hover:text-brand"

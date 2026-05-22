@@ -47,6 +47,31 @@ export function QuizRunner({
     const correctCount = answers.filter((a) => a.isCorrect).length;
     return (
       <section className="mt-2 flex flex-1 flex-col gap-5" aria-live="polite">
+        {bonus && (
+          <section className="overflow-hidden border border-slate-200 bg-white">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={bonus.teaserSrc}
+              alt={bonus.teaserAlt}
+              className="block h-auto w-full"
+            />
+            <div className="p-5">
+              <h3 className="headline text-lg">{bonus.headline}</h3>
+              <span className="headline-accent" />
+              <p className="mt-4 text-sm leading-relaxed text-ink-muted">
+                {bonus.body}
+              </p>
+              <a
+                href={bonus.downloadHref}
+                download={bonus.downloadFilename}
+                className="mt-5 inline-flex items-center gap-2 bg-accent px-5 py-3 text-sm font-medium text-white transition hover:bg-accent/85"
+              >
+                {bonus.downloadLabel} ↓
+              </a>
+            </div>
+          </section>
+        )}
+
         <div className="flex flex-col items-center bg-surface-muted p-6 text-center">
           <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
             Your result
@@ -93,31 +118,6 @@ export function QuizRunner({
             </li>
           ))}
         </ol>
-
-        {bonus && (
-          <section className="mt-4 overflow-hidden border border-slate-200 bg-white">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={bonus.teaserSrc}
-              alt={bonus.teaserAlt}
-              className="block h-auto w-full"
-            />
-            <div className="p-5">
-              <h3 className="headline text-lg">{bonus.headline}</h3>
-              <span className="headline-accent" />
-              <p className="mt-4 text-sm leading-relaxed text-ink-muted">
-                {bonus.body}
-              </p>
-              <a
-                href={bonus.downloadHref}
-                download={bonus.downloadFilename}
-                className="mt-5 inline-flex items-center gap-2 bg-accent px-5 py-3 text-sm font-medium text-white transition hover:bg-accent/85"
-              >
-                {bonus.downloadLabel} ↓
-              </a>
-            </div>
-          </section>
-        )}
 
         <button
           onClick={() => {

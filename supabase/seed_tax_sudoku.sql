@@ -82,44 +82,46 @@ begin
   delete from public.answer_options where question_id in
     (v_q1, v_q2, v_q3, v_q4, v_q5, v_q6, v_q7, v_q8);
 
+  -- Correct-answer position is shuffled across questions (3·A, 3·B, 2·C)
+  -- so visitors can't just tap the middle option every time.
   insert into public.answer_options (question_id, label, is_correct, position) values
-    -- China FTE: 6
-    (v_q1, '6',   true,  0),
-    (v_q1, '60',  false, 1),
+    -- Q1 China FTE: 6 — correct at B
+    (v_q1, '60',  false, 0),
+    (v_q1, '6',   true,  1),
     (v_q1, '600', false, 2),
 
-    -- USA FTE: 14
-    (v_q2, '14',    true,  0),
-    (v_q2, '140',   false, 1),
-    (v_q2, '1,400', false, 2),
+    -- Q2 USA FTE: 14 — correct at C
+    (v_q2, '140',   false, 0),
+    (v_q2, '1,400', false, 1),
+    (v_q2, '14',    true,  2),
 
-    -- Mexico tax rate: 30%
-    (v_q3, '€17', false, 0),
-    (v_q3, '€30', true,  1),
+    -- Q3 Mexico tax rate: 30% — correct at A
+    (v_q3, '€30', true,  0),
+    (v_q3, '€17', false, 1),
     (v_q3, '€45', false, 2),
 
-    -- Romania tax rate: 16%
+    -- Q4 Romania tax rate: 16% — correct at B
     (v_q4, '9%',  false, 0),
     (v_q4, '16%', true,  1),
     (v_q4, '25%', false, 2),
 
-    -- Germany revenue: €359.5m
-    (v_q5, '€35.9m',  false, 0),
-    (v_q5, '€359.5m', true,  1),
+    -- Q5 Germany revenue: €359.5m — correct at A
+    (v_q5, '€359.5m', true,  0),
+    (v_q5, '€35.9m',  false, 1),
     (v_q5, '€3.6bn',  false, 2),
 
-    -- UAE stated capital: €20,000
-    (v_q6, '€20,000',    true,  0),
-    (v_q6, '€200,000',   false, 1),
-    (v_q6, '€2,000,000', false, 2),
+    -- Q6 UAE stated capital: €20,000 — correct at C
+    (v_q6, '€200,000',   false, 0),
+    (v_q6, '€2,000,000', false, 1),
+    (v_q6, '€20,000',    true,  2),
 
-    -- Indonesia pre-tax profit: €4.6m
+    -- Q7 Indonesia pre-tax profit: €4.6m — correct at B
     (v_q7, '€460,000', false, 0),
     (v_q7, '€4.6m',    true,  1),
     (v_q7, '€46m',     false, 2),
 
-    -- Brazil pre-tax profit: €690,000
-    (v_q8, '€69,000',  false, 0),
-    (v_q8, '€690,000', true,  1),
+    -- Q8 Brazil pre-tax profit: €690,000 — correct at A
+    (v_q8, '€690,000', true,  0),
+    (v_q8, '€69,000',  false, 1),
     (v_q8, '€6.9m',    false, 2);
 end $$;

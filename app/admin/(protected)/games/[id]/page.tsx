@@ -51,6 +51,18 @@ async function deleteGame(formData: FormData) {
   redirect("/admin");
 }
 
+async function renameGame(formData: FormData) {
+  "use server";
+  const gameId = String(formData.get("gameId") ?? "");
+  const name = String(formData.get("name") ?? "").trim();
+  if (!gameId || !name) return;
+  await assertAdminOwnsGame(gameId);
+  const sb = supabaseAdmin();
+  const { error } = await sb.from("games").update({ name }).eq("id", gameId);
+  if (error) throw new Error(error.message);
+  revalidatePath(`/admin/games/${gameId}`);
+}
+
 async function addQuestion(formData: FormData) {
   "use server";
   const gameId = String(formData.get("gameId") ?? "");
@@ -212,7 +224,25 @@ export default async function AdminGameEditor(props: PageProps<"/admin/games/[id
           >
             ← zurück zur Übersicht
           </Link>
-          <h1 className="headline mt-3 text-2xl">{g.name}</h1>
+          <form
+            action={renameGame}
+            className="mt-3 flex items-baseline gap-3"
+          >
+            <input type="hidden" name="gameId" value={g.id} />
+            <input
+              name="name"
+              defaultValue={g.name}
+              required
+              aria-label="Spielname"
+              className="headline w-full max-w-md border-0 border-b border-transparent bg-transparent px-0 py-1 text-2xl text-ink outline-none transition hover:border-slate-300 focus:border-brand"
+            />
+            <button
+              type="submit"
+              className="font-display text-[10px] uppercase tracking-[0.18em] text-ink-muted hover:text-brand"
+            >
+              Umbenennen
+            </button>
+          </form>
           <span className="headline-accent" />
         </div>
         <div className="flex gap-2">

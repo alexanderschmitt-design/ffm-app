@@ -25,6 +25,8 @@ export type Question = {
   position: number;
   prompt: string;
   explanation: string | null;
+  image_url: string | null;
+  category: string | null;
   created_at: string;
 };
 

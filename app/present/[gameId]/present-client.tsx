@@ -11,6 +11,7 @@ type PresentationQuestion = {
   slug: string;
   prompt: string;
   position: number;
+  image_url: string | null;
   qrDataUrl: string;
   playUrl: string;
   options: AnswerOption[];
@@ -150,6 +151,15 @@ export function PresentClient({ game, questions }: Props) {
             <h1 className="text-5xl font-semibold leading-tight">{current.prompt}</h1>
             <span className="headline-accent mt-4 !w-16 !h-[3px]" />
           </div>
+
+          {current.image_url && (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={current.image_url}
+              alt=""
+              className="max-h-[40vh] w-auto object-contain"
+            />
+          )}
 
           <ul className="flex flex-col gap-4">
             {current.options.map((o) => {

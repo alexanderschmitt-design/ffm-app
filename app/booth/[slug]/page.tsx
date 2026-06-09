@@ -122,11 +122,10 @@ export default async function BoothLandingPage(
   const proto = (h.get("x-forwarded-proto") ?? "http").split(",")[0];
   const baseUrl = `${proto}://${host}`;
 
-  const playUrl =
-    target.game && target.hasQuestions
-      ? `${baseUrl}/quiz/${target.game.id}`
-      : null;
-  const qr = playUrl ? await qrDataUrl(playUrl) : null;
+  // Static, poster-safe URL: stays valid across new games so printed QR
+  // codes never expire. /start/<slug> resolves to the current live game.
+  const playUrl = `${baseUrl}/start/${target.booth.slug}`;
+  const qr = await qrDataUrl(playUrl);
 
   const copy = BOOTH_COPY[target.booth.slug] ?? BOOTH_COPY.tax;
 

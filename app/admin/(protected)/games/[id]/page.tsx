@@ -7,6 +7,7 @@ import { adminBoothSlug } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { qrDataUrl } from "@/lib/qr";
 import type { Game, Question, AnswerOption } from "@/lib/types";
+import { GPC_CATEGORIES } from "@/lib/gpc-categories";
 import { OptionsEditor } from "./options-editor";
 
 export const dynamic = "force-dynamic";
@@ -24,17 +25,6 @@ const ALLOWED_IMAGE_TYPES = new Set([
 ]);
 const STORAGE_BUCKET = "question-images";
 const STORAGE_PATH_MARKER = `/object/public/${STORAGE_BUCKET}/`;
-
-// Stages from the GPC product configuration workflow. Only the GPC booth
-// admin sees this dropdown; Tax booth questions stay uncategorised.
-const GPC_CATEGORIES = [
-  "CAD Design",
-  "Articles / Items",
-  "Product Knowledge and Rules",
-  "Sales Configuration",
-  "Production Configuration",
-  "CAD Configuration",
-] as const;
 
 // Verifies the currently authenticated admin owns the booth that owns this game.
 // Throws on mismatch so tampered form submissions can't cross-mutate booths.

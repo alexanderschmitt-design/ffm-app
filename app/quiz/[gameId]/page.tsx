@@ -3,6 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase/server";
 import { GuentnerMark } from "@/app/brand";
 import { QuizRunner, type QuizBonus } from "./quiz-runner";
 import type { Question, AnswerOption } from "@/lib/types";
+import { GPC_CATEGORIES } from "@/lib/gpc-categories";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +47,18 @@ export default async function QuizPage(props: PageProps<"/quiz/[gameId]">) {
     .eq("id", game.booth_id)
     .maybeSingle();
 
-  const qs = (questions ?? []) as Question[];
+  let qs = (questions ?? []) as Question[];
+
+  // GPC booth: show exactly one question per category in fixed order.
+  // If multiple questions exist for a category, pick one at random.
+  // Categories without a tagged question are silently skipped.
+  if (booth?.slug === "gpc") {
+    qs = GPC_CATEGORIES.flatMap((cat) => {
+      const pool = qs.filter((q) => q.category === cat);
+      if (pool.length === 0) return [];
+      return [pool[Math.floor(Math.random() * pool.length)]];
+    });
+  }
 
   const ids = qs.map((q) => q.id);
   let options: AnswerOption[] = [];

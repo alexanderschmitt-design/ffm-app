@@ -15,6 +15,7 @@ type BoothCopy = {
   headline: ReactNode;
   intro: ReactNode;
   image: { src: string; alt: string; aspectClass: string };
+  variant?: "standard" | "gpc-cards";
 };
 
 const BOOTH_COPY: Record<string, BoothCopy> = {
@@ -61,6 +62,7 @@ const BOOTH_COPY: Record<string, BoothCopy> = {
       alt: "myGPC product configurator home screen",
       aspectClass: "aspect-[16/10]",
     },
+    variant: "gpc-cards",
   },
 };
 
@@ -137,86 +139,166 @@ export default async function BoothLandingPage(
       </header>
 
       <main className="flex flex-1 flex-col">
-        <section className="bg-white px-8 py-20">
-          <div className="mx-auto grid max-w-6xl items-start gap-12 md:grid-cols-[1.1fr_1fr]">
-            <div>
-              <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-                {copy.kicker}
-              </p>
-              <h1 className="headline mt-4 text-4xl leading-[1.15] md:text-5xl">
-                {copy.headline}
-              </h1>
-              <span className="headline-accent" />
-              <p className="mt-8 max-w-md text-base leading-relaxed text-ink">
-                {copy.intro}
-              </p>
-              <p className="mt-4 max-w-md text-base leading-relaxed text-ink-muted">
-                Simply scan the QR code with your phone to benchmark your
-                insights. The challenge takes less than two minutes, and you
-                will receive your score instantly.
-              </p>
-              <p className="mt-4 max-w-md text-base leading-relaxed text-ink-muted">
-                We look forward to sharing the full story and detailed
-                insights with you at our booth afterwards.
-              </p>
-              {target.game && (
-                <p className="mt-6 font-display text-xs uppercase tracking-[0.18em] text-ink-muted">
-                  Currently running: {target.game.name}
-                  {target.game.status === "live" && (
-                    <span className="ml-3 inline-block bg-accent px-2 py-0.5 text-[10px] text-white">
-                      LIVE
-                    </span>
-                  )}
-                </p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-6">
-              <div
-                className={`relative w-full overflow-hidden ${copy.image.aspectClass}`}
-              >
+        <section
+          className={`bg-white px-8 pb-20 ${
+            copy.variant === "gpc-cards" ? "pt-0" : "pt-20"
+          }`}
+        >
+          {copy.variant === "gpc-cards" ? (
+            <div className="mx-auto flex max-w-6xl flex-col items-center gap-8">
+              <div className="relative w-full">
                 <Image
-                  src={copy.image.src}
-                  alt={copy.image.alt}
-                  fill
-                  sizes="(min-width: 768px) 50vw, 100vw"
-                  className="object-cover"
+                  src="/Header_Gaming.png"
+                  alt="Gaming Header"
+                  width={1920}
+                  height={400}
+                  className="h-auto w-full"
                   priority
                 />
               </div>
 
-              {qr && playUrl ? (
-                <div className="flex flex-col items-center gap-3">
-                  <div className="border border-slate-200 bg-white p-4 shadow-sm">
-                    <Image
-                      src={qr}
-                      alt="QR code to play"
-                      width={240}
-                      height={240}
-                      unoptimized
-                      priority
-                    />
-                  </div>
-                  <div className="font-display text-center text-xs uppercase tracking-[0.2em] text-ink-muted">
-                    Scan me and play
-                  </div>
-                  <div className="break-all text-center font-mono text-[11px] text-ink-muted">
-                    {playUrl}
-                  </div>
+              <div className="relative w-full">
+                <Image
+                  src="/1_row.png"
+                  alt="GPC Categories — upper row"
+                  width={1920}
+                  height={500}
+                  className="h-auto w-full"
+                  priority
+                />
+              </div>
+
+              <div className="flex w-full items-center justify-center gap-6">
+                <div className="w-[70%]">
+                  <Image
+                    src="/Lego_Bridge.png"
+                    alt=""
+                    width={1920}
+                    height={120}
+                    className="h-auto w-full"
+                  />
                 </div>
-              ) : (
-                <div className="flex w-full flex-col items-center justify-center border border-dashed border-slate-300 bg-surface-muted p-8 text-center">
-                  <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-                    No game ready
-                  </p>
-                  <p className="mt-3 text-sm text-ink-muted">
-                    Create a game with at least one question in the admin
-                    area — the QR code will appear here.
-                  </p>
-                </div>
+                {qr && playUrl ? (
+                  <div className="flex shrink-0 flex-col items-center gap-2">
+                    <div className="border border-slate-200 bg-white p-3 shadow-sm">
+                      <Image
+                        src={qr}
+                        alt="QR code to play"
+                        width={200}
+                        height={200}
+                        unoptimized
+                        priority
+                      />
+                    </div>
+                    <div className="font-display text-center text-xs uppercase tracking-[0.2em] text-ink-muted">
+                      Scan me and play
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="relative w-full">
+                <Image
+                  src="/2_row.png"
+                  alt="GPC Categories — lower row"
+                  width={1920}
+                  height={500}
+                  className="h-auto w-full"
+                />
+              </div>
+
+              {playUrl && (
+                <a
+                  href={playUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="break-all text-center font-mono text-[11px] text-ink-muted underline-offset-4 hover:text-brand hover:underline"
+                >
+                  {playUrl}
+                </a>
               )}
             </div>
-          </div>
+          ) : (
+            <div className="mx-auto grid max-w-6xl items-start gap-12 md:grid-cols-[1.1fr_1fr]">
+              <div>
+                <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
+                  {copy.kicker}
+                </p>
+                <h1 className="headline mt-4 text-4xl leading-[1.15] md:text-5xl">
+                  {copy.headline}
+                </h1>
+                <span className="headline-accent" />
+                <p className="mt-8 max-w-md text-base leading-relaxed text-ink">
+                  {copy.intro}
+                </p>
+                <p className="mt-4 max-w-md text-base leading-relaxed text-ink-muted">
+                  Simply scan the QR code with your phone to benchmark your
+                  insights. The challenge takes less than two minutes, and you
+                  will receive your score instantly.
+                </p>
+                <p className="mt-4 max-w-md text-base leading-relaxed text-ink-muted">
+                  We look forward to sharing the full story and detailed
+                  insights with you at our booth afterwards.
+                </p>
+                {target.game && (
+                  <p className="mt-6 font-display text-xs uppercase tracking-[0.18em] text-ink-muted">
+                    Currently running: {target.game.name}
+                    {target.game.status === "live" && (
+                      <span className="ml-3 inline-block bg-accent px-2 py-0.5 text-[10px] text-white">
+                        LIVE
+                      </span>
+                    )}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-6">
+                <div
+                  className={`relative w-full overflow-hidden ${copy.image.aspectClass}`}
+                >
+                  <Image
+                    src={copy.image.src}
+                    alt={copy.image.alt}
+                    fill
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+
+                {qr && playUrl ? (
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="border border-slate-200 bg-white p-4 shadow-sm">
+                      <Image
+                        src={qr}
+                        alt="QR code to play"
+                        width={240}
+                        height={240}
+                        unoptimized
+                        priority
+                      />
+                    </div>
+                    <div className="font-display text-center text-xs uppercase tracking-[0.2em] text-ink-muted">
+                      Scan me and play
+                    </div>
+                    <div className="break-all text-center font-mono text-[11px] text-ink-muted">
+                      {playUrl}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex w-full flex-col items-center justify-center border border-dashed border-slate-300 bg-surface-muted p-8 text-center">
+                    <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
+                      No game ready
+                    </p>
+                    <p className="mt-3 text-sm text-ink-muted">
+                      Create a game with at least one question in the admin
+                      area — the QR code will appear here.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </section>
       </main>
 

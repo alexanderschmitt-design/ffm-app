@@ -218,84 +218,37 @@ export default async function BoothLandingPage(
               )}
             </div>
           ) : (
-            <div className="mx-auto grid max-w-6xl items-start gap-12 md:grid-cols-[1.1fr_1fr]">
-              <div>
-                <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-                  {copy.kicker}
-                </p>
-                <h1 className="headline mt-4 text-4xl leading-[1.15] md:text-5xl">
-                  {copy.headline}
-                </h1>
-                <span className="headline-accent" />
-                <p className="mt-8 max-w-md text-base leading-relaxed text-ink">
-                  {copy.intro}
-                </p>
-                <p className="mt-4 max-w-md text-base leading-relaxed text-ink-muted">
-                  Simply scan the QR code with your phone to benchmark your
-                  insights. The challenge takes less than two minutes, and you
-                  will receive your score instantly.
-                </p>
-                <p className="mt-4 max-w-md text-base leading-relaxed text-ink-muted">
-                  We look forward to sharing the full story and detailed
-                  insights with you at our booth afterwards.
-                </p>
-                {target.game && (
-                  <p className="mt-6 font-display text-xs uppercase tracking-[0.18em] text-ink-muted">
-                    Currently running: {target.game.name}
-                    {target.game.status === "live" && (
-                      <span className="ml-3 inline-block bg-accent px-2 py-0.5 text-[10px] text-white">
-                        LIVE
-                      </span>
-                    )}
-                  </p>
-                )}
+            <div className="mx-auto flex max-w-3xl flex-col items-center gap-8">
+              <div className="relative w-full">
+                <Image
+                  src="/ffm-tax-teaser.svg"
+                  alt=""
+                  width={1000}
+                  height={600}
+                  className="h-auto w-full"
+                  priority
+                />
               </div>
 
-              <div className="flex flex-col gap-6">
-                <div
-                  className={`relative w-full overflow-hidden ${copy.image.aspectClass}`}
-                >
-                  <Image
-                    src={copy.image.src}
-                    alt={copy.image.alt}
-                    fill
-                    sizes="(min-width: 768px) 50vw, 100vw"
-                    className="object-cover"
-                    priority
-                  />
-                </div>
-
-                {qr && playUrl ? (
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="border border-slate-200 bg-white p-4 shadow-sm">
-                      <Image
-                        src={qr}
-                        alt="QR code to play"
-                        width={240}
-                        height={240}
-                        unoptimized
-                        priority
-                      />
-                    </div>
-                    <div className="font-display text-center text-xs uppercase tracking-[0.2em] text-ink-muted">
-                      Scan me and play
-                    </div>
-                    <div className="break-all text-center font-mono text-[11px] text-ink-muted">
-                      {playUrl}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex w-full flex-col items-center justify-center border border-dashed border-slate-300 bg-surface-muted p-8 text-center">
-                    <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-                      No game ready
-                    </p>
-                    <p className="mt-3 text-sm text-ink-muted">
-                      Create a game with at least one question in the admin
-                      area — the QR code will appear here.
-                    </p>
-                  </div>
-                )}
+              <div className="border border-slate-200 bg-white p-4 shadow-sm">
+                <Image
+                  src={qr}
+                  alt="QR code to play"
+                  width={240}
+                  height={240}
+                  unoptimized
+                  priority
+                />
               </div>
+
+              <a
+                href={playUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="break-all text-center font-mono text-[11px] text-ink-muted underline-offset-4 hover:text-brand hover:underline"
+              >
+                {playUrl}
+              </a>
             </div>
           )}
         </section>

@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const LOGO_SRC = "/G%C3%BCntner_logo_rgb.jpg";
-const LOGO_WIDTH = 2363;
-const LOGO_HEIGHT = 1818;
+const LOGO_SRC = "/guentner-group-logo.png";
+const LOGO_WIDTH = 595;
+const LOGO_HEIGHT = 271;
 
 export function GuentnerMark({ className = "" }: { className?: string }) {
   return (

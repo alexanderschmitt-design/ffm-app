@@ -139,8 +139,10 @@ export default async function BoothLandingPage(
 
       <main className="flex flex-1 flex-col">
         <section
-          className={`bg-white px-8 pb-20 ${
-            copy.variant === "gpc-cards" ? "pt-0" : "pt-20"
+          className={`bg-white ${
+            copy.variant === "gpc-cards"
+              ? "px-8 pt-0 pb-20"
+              : "px-0 pt-0 pb-20"
           }`}
         >
           {copy.variant === "gpc-cards" ? (
@@ -218,8 +220,8 @@ export default async function BoothLandingPage(
               )}
             </div>
           ) : (
-            <div className="mx-auto flex max-w-3xl flex-col items-center gap-8">
-              <div className="relative w-full">
+            <div className="flex w-full flex-col items-center gap-8">
+              <div className="w-full">
                 <Image
                   src="/ffm-tax-teaser.svg"
                   alt=""
@@ -245,7 +247,7 @@ export default async function BoothLandingPage(
                 href={playUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="break-all text-center font-mono text-[11px] text-ink-muted underline-offset-4 hover:text-brand hover:underline"
+                className="break-all px-4 text-center font-mono text-[11px] text-ink-muted underline-offset-4 hover:text-brand hover:underline"
               >
                 {playUrl}
               </a>

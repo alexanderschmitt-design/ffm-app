@@ -64,7 +64,7 @@ export function QuizRunner({
               alt={bonus.teaserAlt}
               className="mt-4 block h-auto w-full"
             />
-            <div className="p-5">
+            <div className="flex justify-center p-5">
               <a
                 href={bonus.downloadHref}
                 download={bonus.downloadFilename}

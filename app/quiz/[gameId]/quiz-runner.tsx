@@ -138,10 +138,9 @@ export function QuizRunner({
   }
 
   const q = questions[index];
-  const currentAnswer = answers[index];
 
   async function submit(option: Option) {
-    if (pending || currentAnswer) return;
+    if (pending) return;
     setError(null);
     setPending(option.id);
     try {
@@ -160,6 +159,7 @@ export function QuizRunner({
         isCorrect: option.id === correct.id,
       };
       setAnswers((prev) => [...prev, answer]);
+      setIndex((i) => i + 1);
       setPending(null);
     } catch (e) {
       console.error(e);
@@ -178,55 +178,21 @@ export function QuizRunner({
       </h2>
       <span className="headline-accent" />
 
-      {currentAnswer ? (
-        <>
-          <div
-            className={`mt-3 flex flex-col gap-2 p-5 text-center ${
-              currentAnswer.isCorrect
-                ? "bg-accent/10 ring-2 ring-accent"
-                : "bg-rose-50 ring-2 ring-rose-500"
-            }`}
-          >
-            <div
-              className={`headline text-2xl ${
-                currentAnswer.isCorrect ? "text-accent" : "text-rose-600"
-              }`}
-            >
-              {currentAnswer.isCorrect ? "Correct!" : "Not quite."}
-            </div>
-            {!currentAnswer.isCorrect && (
-              <div className="text-base">
-                Correct answer:{" "}
-                <span className="font-semibold">{currentAnswer.correct.label}</span>
-              </div>
-            )}
-          </div>
+      <div className="flex flex-col gap-3">
+        {q.options.map((o) => (
           <button
-            onClick={() => setIndex(index + 1)}
-            className="mt-2 bg-brand px-5 py-4 text-lg font-medium text-white transition hover:bg-brand-dark"
+            key={o.id}
+            onClick={() => submit(o)}
+            disabled={pending !== null}
+            className="flex min-h-[72px] w-full items-center justify-center bg-brand px-4 py-4 text-lg font-medium text-white transition active:scale-[0.98] hover:bg-brand-dark disabled:opacity-50"
           >
-            {index + 1 < questions.length
-              ? "Next question →"
-              : "See result →"}
+            {pending === o.id ? "Sending…" : o.label}
           </button>
-        </>
-      ) : (
-        <div className="flex flex-col gap-3">
-          {q.options.map((o) => (
-            <button
-              key={o.id}
-              onClick={() => submit(o)}
-              disabled={pending !== null}
-              className="flex min-h-[72px] w-full items-center justify-center bg-brand px-4 py-4 text-lg font-medium text-white transition active:scale-[0.98] hover:bg-brand-dark disabled:opacity-50"
-            >
-              {pending === o.id ? "Sending…" : o.label}
-            </button>
-          ))}
-          {error && (
-            <p className="mt-2 text-center text-sm text-rose-600">{error}</p>
-          )}
-        </div>
-      )}
+        ))}
+        {error && (
+          <p className="mt-2 text-center text-sm text-rose-600">{error}</p>
+        )}
+      </div>
     </section>
   );
 }

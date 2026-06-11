@@ -256,17 +256,14 @@ export default async function BoothLandingPage(
               </div>
             </div>
           ) : (
-            <div className="flex w-full flex-col items-center gap-8">
-              <div className="w-[80%]">
-                <Image
-                  src="/ffm-tax-teaser.svg"
-                  alt=""
-                  width={1000}
-                  height={600}
-                  className="h-auto w-full"
-                  priority
-                />
-              </div>
+            <div className="flex w-full flex-col items-center gap-8 px-4">
+              <h1 className="text-center font-display text-3xl font-bold italic tracking-tight text-brand-dark sm:text-5xl">
+                Ready to test your{" "}
+                <span className="text-brand">
+                  &ldquo;tax auditor logic&rdquo;
+                </span>
+                ?
+              </h1>
 
               <div className="border border-slate-200 bg-white p-4 shadow-sm">
                 <Image
@@ -287,6 +284,22 @@ export default async function BoothLandingPage(
               >
                 {playUrl}
               </a>
+
+              <div className="w-[80%]">
+                <Image
+                  src="/ffm-tax-teaser.svg"
+                  alt=""
+                  width={1000}
+                  height={600}
+                  className="h-auto w-full"
+                  priority
+                />
+              </div>
+
+              <h2 className="text-center font-display text-3xl font-bold italic tracking-tight text-brand-dark sm:text-5xl">
+                Let&apos;s talk about{" "}
+                <span style={{ color: "#F2701D" }}>Global Tax!</span>
+              </h2>
             </div>
           )}
         </section>

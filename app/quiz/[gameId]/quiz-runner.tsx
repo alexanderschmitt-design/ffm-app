@@ -49,24 +49,26 @@ export function QuizRunner({
       <section className="mt-2 flex flex-1 flex-col gap-5" aria-live="polite">
         {bonus && (
           <section className="overflow-hidden border border-slate-200 bg-white">
+            <div className="px-5 pt-5 text-center">
+              <h2 className="font-display text-2xl font-bold italic tracking-tight text-brand-dark sm:text-4xl">
+                FROM <span className="text-brand">ZERO</span> TO{" "}
+                <span style={{ color: "#F2701D" }}>HERO</span>
+              </h2>
+              <h3 className="mt-2 font-display text-lg font-bold italic tracking-tight text-brand sm:text-2xl">
+                PLAY THE GAME!
+              </h3>
+            </div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={bonus.teaserSrc}
               alt={bonus.teaserAlt}
-              className="block h-auto w-full"
+              className="mt-4 block h-auto w-full"
             />
             <div className="p-5">
-              <h3 className="headline text-lg">{bonus.headline}</h3>
-              <span className="headline-accent" />
-              {bonus.body && (
-                <p className="mt-4 text-sm leading-relaxed text-ink-muted">
-                  {bonus.body}
-                </p>
-              )}
               <a
                 href={bonus.downloadHref}
                 download={bonus.downloadFilename}
-                className="mt-5 inline-flex items-center gap-2 bg-accent px-5 py-3 text-sm font-medium text-white transition hover:bg-accent/85"
+                className="inline-flex items-center gap-2 bg-brand px-5 py-3 text-sm font-medium text-white transition hover:bg-brand-dark"
               >
                 {bonus.downloadLabel} ↓
               </a>

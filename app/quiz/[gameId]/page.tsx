@@ -15,7 +15,7 @@ const BOOTH_BONUSES: Record<string, QuizBonus> = {
     headline: "You are a hero — enjoy building a Güntner Unit",
     body: "",
     downloadHref: "/lego-guentner-plan.pdf",
-    downloadLabel: "Download building instructions (PDF)",
+    downloadLabel: "Download Plan (PDF)",
     downloadFilename: "guentner-bauanleitung.pdf",
   },
 };

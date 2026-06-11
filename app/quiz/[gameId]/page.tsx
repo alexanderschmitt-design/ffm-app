@@ -11,14 +11,12 @@ export const dynamic = "force-dynamic";
 const BOOTH_BONUSES: Record<string, QuizBonus> = {
   gpc: {
     teaserSrc: "/lego-guentner-teaser.webp",
-    teaserAlt: "Lego blueprint of a Güntner unit",
-    headline: "Bonus: build it at home",
-    body:
-      "Thanks for playing. You just earned a Lego blueprint of a Güntner unit — " +
-      "scan it onto your desk and rebuild what you saw at the booth.",
+    teaserAlt: "Lego figures building a Güntner unit",
+    headline: "You are a hero — enjoy building a Güntner Unit",
+    body: "",
     downloadHref: "/lego-guentner-plan.pdf",
-    downloadLabel: "Download Lego plan (PDF)",
-    downloadFilename: "guentner-lego-plan.pdf",
+    downloadLabel: "Download building instructions (PDF)",
+    downloadFilename: "guentner-bauanleitung.pdf",
   },
 };
 

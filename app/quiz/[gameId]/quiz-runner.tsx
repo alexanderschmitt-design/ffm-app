@@ -58,9 +58,11 @@ export function QuizRunner({
             <div className="p-5">
               <h3 className="headline text-lg">{bonus.headline}</h3>
               <span className="headline-accent" />
-              <p className="mt-4 text-sm leading-relaxed text-ink-muted">
-                {bonus.body}
-              </p>
+              {bonus.body && (
+                <p className="mt-4 text-sm leading-relaxed text-ink-muted">
+                  {bonus.body}
+                </p>
+              )}
               <a
                 href={bonus.downloadHref}
                 download={bonus.downloadFilename}

@@ -288,9 +288,9 @@ export default async function BoothLandingPage(
                 {playUrl}
               </a>
 
-              <div className="w-[80%]">
+              <div className="w-[96%]">
                 <Image
-                  src="/cbcr-karte-tabelle.svg"
+                  src="/cbcr-karte-tabelle_v2.svg"
                   alt=""
                   width={1000}
                   height={520}

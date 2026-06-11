@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 // Per-booth bonus shown on the quiz summary screen.
 const BOOTH_BONUSES: Record<string, QuizBonus> = {
   gpc: {
-    teaserSrc: "/lego-guentner-teaser.webp",
+    teaserSrc: "/lego-bauanleitung-teaser.png",
     teaserAlt: "Lego figures building a Güntner unit",
     headline: "You are a hero — enjoy building a Güntner Unit",
     body: "",

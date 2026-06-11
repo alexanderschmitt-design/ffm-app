@@ -147,10 +147,10 @@ export default async function BoothLandingPage(
             <div className="mx-auto flex max-w-6xl flex-col items-center gap-6">
               <div className="relative w-full">
                 <Image
-                  src="/Header_Gaming.png"
-                  alt="Product Configuration Solutions — From Zero to Hero"
-                  width={1920}
-                  height={400}
+                  src="/pcs-header.svg"
+                  alt="Product Configuration Solutions — Güntner Group"
+                  width={1000}
+                  height={150}
                   className="h-auto w-full"
                   priority
                 />

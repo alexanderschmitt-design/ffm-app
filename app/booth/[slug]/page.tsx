@@ -257,13 +257,16 @@ export default async function BoothLandingPage(
             </div>
           ) : (
             <div className="flex w-full flex-col items-center gap-8 px-4">
-              <h1 className="text-center font-display text-3xl font-bold italic tracking-tight text-brand-dark sm:text-5xl">
-                Ready to test your{" "}
-                <span className="text-brand">
-                  &ldquo;tax auditor logic&rdquo;
-                </span>
-                ?
-              </h1>
+              <div className="w-full max-w-3xl">
+                <Image
+                  src="/headline-ready-to-test.svg"
+                  alt='Ready to test your "tax auditor logic"?'
+                  width={502}
+                  height={54}
+                  className="h-auto w-full"
+                  priority
+                />
+              </div>
 
               <div className="border border-slate-200 bg-white p-4 shadow-sm">
                 <Image
@@ -287,19 +290,24 @@ export default async function BoothLandingPage(
 
               <div className="w-[80%]">
                 <Image
-                  src="/ffm-tax-teaser.svg"
+                  src="/cbcr-karte-tabelle.svg"
                   alt=""
                   width={1000}
-                  height={600}
+                  height={520}
                   className="h-auto w-full"
                   priority
                 />
               </div>
 
-              <h2 className="text-center font-display text-3xl font-bold italic tracking-tight text-brand-dark sm:text-5xl">
-                Let&apos;s talk about{" "}
-                <span style={{ color: "#F2701D" }}>Global Tax!</span>
-              </h2>
+              <div className="w-full max-w-3xl">
+                <Image
+                  src="/headline-lets-talk-global-tax.svg"
+                  alt="Let's talk about Global Tax!"
+                  width={368}
+                  height={49}
+                  className="h-auto w-full"
+                />
+              </div>
             </div>
           )}
         </section>

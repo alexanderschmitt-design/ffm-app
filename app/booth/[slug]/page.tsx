@@ -144,11 +144,11 @@ export default async function BoothLandingPage(
           }`}
         >
           {copy.variant === "gpc-cards" ? (
-            <div className="mx-auto flex max-w-6xl flex-col items-center gap-8">
+            <div className="mx-auto flex max-w-6xl flex-col items-center gap-6">
               <div className="relative w-full">
                 <Image
                   src="/Header_Gaming.png"
-                  alt="Gaming Header"
+                  alt="Product Configuration Solutions — From Zero to Hero"
                   width={1920}
                   height={400}
                   className="h-auto w-full"
@@ -156,10 +156,17 @@ export default async function BoothLandingPage(
                 />
               </div>
 
+              <div
+                className="rounded-full px-6 py-2 font-display text-xs uppercase tracking-[0.2em] text-white sm:text-sm"
+                style={{ backgroundColor: "#F2701D" }}
+              >
+                Operations — Deliverables
+              </div>
+
               <div className="relative w-full">
                 <Image
-                  src="/1_row.png"
-                  alt="GPC Categories — upper row"
+                  src="/2_row.png"
+                  alt="GPC Operations — CAD Configuration, Production Configuration, Sales Configuration"
                   width={1920}
                   height={500}
                   className="h-auto w-full"
@@ -167,42 +174,42 @@ export default async function BoothLandingPage(
                 />
               </div>
 
-              <div className="flex w-full items-center justify-center gap-6">
-                <div className="w-[70%]">
-                  <Image
-                    src="/Lego_Bridge.png"
-                    alt=""
-                    width={1920}
-                    height={120}
-                    className="h-auto w-full"
-                  />
-                </div>
-                {qr && playUrl ? (
-                  <div className="flex shrink-0 flex-col items-center gap-2">
-                    <div className="border border-slate-200 bg-white p-3 shadow-sm">
-                      <Image
-                        src={qr}
-                        alt="QR code to play"
-                        width={200}
-                        height={200}
-                        unoptimized
-                        priority
-                      />
-                    </div>
-                    <div className="font-display text-center text-xs uppercase tracking-[0.2em] text-ink-muted">
-                      Scan me and play
-                    </div>
-                  </div>
-                ) : null}
+              <div className="relative w-[80%]">
+                <Image
+                  src="/Lego_Bridge.png"
+                  alt=""
+                  width={1920}
+                  height={400}
+                  className="h-auto w-full"
+                />
               </div>
 
               <div className="relative w-full">
                 <Image
-                  src="/2_row.png"
-                  alt="GPC Categories — lower row"
+                  src="/1_row.png"
+                  alt="GPC Engineering — CAD Design, Articles / Items, Product Knowledge and Rules"
                   width={1920}
                   height={500}
                   className="h-auto w-full"
+                />
+              </div>
+
+              <div className="rounded-full bg-brand px-6 py-2 font-display text-xs uppercase tracking-[0.2em] text-white sm:text-sm">
+                Engineering — Pillars
+              </div>
+
+              <h2 className="mt-4 text-center font-display text-3xl font-bold italic tracking-tight text-brand-dark sm:text-5xl">
+                PLAY THE GAME!
+              </h2>
+
+              <div className="border border-slate-200 bg-white p-3 shadow-sm">
+                <Image
+                  src={qr}
+                  alt="QR code to play"
+                  width={240}
+                  height={240}
+                  unoptimized
+                  priority
                 />
               </div>
 
@@ -211,11 +218,42 @@ export default async function BoothLandingPage(
                   href={playUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="break-all text-center font-mono text-[11px] text-ink-muted underline-offset-4 hover:text-brand hover:underline"
+                  className="break-all px-4 text-center font-mono text-[11px] text-ink-muted underline-offset-4 hover:text-brand hover:underline"
                 >
                   {playUrl}
                 </a>
               )}
+
+              <div className="mt-8 flex w-full flex-wrap items-center justify-center gap-x-8 gap-y-3 border-t border-slate-200 pt-6 text-sm text-ink">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="block h-4 w-4"
+                    style={{ backgroundColor: "#7A7A7A" }}
+                  />
+                  <span>Spark Radiance Software</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className="block h-4 w-4"
+                    style={{ backgroundColor: "#E03A3E" }}
+                  />
+                  <span>Infor LN</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className="block h-4 w-4"
+                    style={{ backgroundColor: "#1A2D7E" }}
+                  />
+                  <span>CONTACT PDM-System</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className="block h-4 w-4"
+                    style={{ backgroundColor: "#1ABC9C" }}
+                  />
+                  <span>Siemens CAD</span>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="flex w-full flex-col items-center gap-8">

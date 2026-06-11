@@ -138,13 +138,7 @@ export default async function BoothLandingPage(
       </header>
 
       <main className="flex flex-1 flex-col">
-        <section
-          className={`bg-white ${
-            copy.variant === "gpc-cards"
-              ? "px-8 pt-0 pb-20"
-              : "px-0 pt-0 pb-20"
-          }`}
-        >
+        <section className="bg-white px-8 pt-0 pb-20">
           {copy.variant === "gpc-cards" ? (
             <div className="mx-auto flex max-w-6xl flex-col items-center gap-8">
               <div className="relative w-full">
@@ -220,7 +214,7 @@ export default async function BoothLandingPage(
               )}
             </div>
           ) : (
-            <div className="flex w-full flex-col items-center gap-8">
+            <div className="mx-auto flex max-w-6xl flex-col items-center gap-8">
               <div className="w-full">
                 <Image
                   src="/ffm-tax-teaser.svg"

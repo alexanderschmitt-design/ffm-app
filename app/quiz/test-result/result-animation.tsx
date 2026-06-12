@@ -175,7 +175,7 @@ export function ResultAnimation({
 
   const passed = effectiveCorrect >= PASS_THRESHOLD;
   const subline = passed
-    ? "Ready to build? Download the official blueprint and pick up your Güntner Cooler kit right here at our booth."
+    ? "Ready to build? Download the official blueprint and pick up your Güntner Flat Compact Kit right here at our booth."
     : "That can be better — we'd be happy to help!";
 
   const answers = quizAnswers

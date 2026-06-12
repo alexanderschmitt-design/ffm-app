@@ -176,7 +176,7 @@ export function ResultAnimation({
 
   const passed = effectiveCorrect >= PASS_THRESHOLD;
   const subline = passed
-    ? "Ready to build? Download the official blueprint and pick up your Güntner Flat Compact Kit right here at our booth."
+    ? "Ready to build? Download LEGO Plan and pick up your LEGO Kit right here at our booth."
     : "That can be better — we'd be happy to help!";
 
   const answers = quizAnswers
@@ -203,8 +203,8 @@ export function ResultAnimation({
     <section className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center gap-6 px-2 py-8">
       <style>{`
         @keyframes hero-rise {
-          0%   { opacity: 0; transform: translateY(20px); }
-          100% { opacity: 1; transform: translateY(0); }
+          0%   { opacity: 0; }
+          100% { opacity: 1; }
         }
         @keyframes hero-bobble {
           0%, 100% { transform: scale(1); }
@@ -274,15 +274,12 @@ export function ResultAnimation({
         </div>
       )}
 
-      {/* Animation panel — headline + bar + score. Collapses (height 0 +
-          opacity 0) once finalView triggers, so the final panel can take
-          over the same screen real estate without layout shift hanging
-          around. */}
+      {/* Both panels share the same grid cell so they crossfade in place
+          (no layout shift, no upward push when the first one fades out). */}
+      <div className="grid w-full">
       <div
-        className={`flex w-full flex-col items-center gap-6 overflow-hidden transition-all duration-500 ease-out ${
-          finalView
-            ? "pointer-events-none max-h-0 opacity-0"
-            : "max-h-[800px] opacity-100"
+        className={`col-start-1 row-start-1 flex w-full flex-col items-center gap-6 transition-opacity duration-1000 ease-out ${
+          finalView ? "pointer-events-none opacity-0" : "opacity-100"
         }`}
       >
         <h1 className="text-center font-display text-3xl font-bold italic leading-tight tracking-tight text-ink sm:text-5xl">
@@ -295,34 +292,38 @@ export function ResultAnimation({
           </span>
         </h1>
 
-        <div className="relative h-24 w-full">
-          <div className="absolute inset-x-0 bottom-0 h-3 overflow-hidden rounded-full bg-surface-muted">
+        {/* Outer padding equals half the figure width so the pusher stays
+            fully visible at 0% and 100%. */}
+        <div className="h-24 w-full px-[60px]">
+          <div className="relative h-full w-full">
+            <div className="absolute inset-x-0 bottom-0 h-3 overflow-hidden rounded-full bg-surface-muted">
+              <div
+                className="h-full rounded-full bg-brand"
+                style={{
+                  width: `${progress}%`,
+                  transition: `width ${BAR_DURATION_MS}ms ease-out`,
+                }}
+              />
+            </div>
             <div
-              className="h-full rounded-full bg-brand"
+              ref={legoRef}
+              className="absolute bottom-3"
               style={{
-                width: `${progress}%`,
-                transition: `width ${BAR_DURATION_MS}ms ease-out`,
+                left: `${progress}%`,
+                width: "120px",
+                transform: "translateX(-50%)",
+                transition: `left ${BAR_DURATION_MS}ms ease-out`,
               }}
-            />
-          </div>
-          <div
-            ref={legoRef}
-            className="absolute bottom-3"
-            style={{
-              left: `${progress}%`,
-              width: "120px",
-              transform: "translateX(-50%)",
-              transition: `left ${BAR_DURATION_MS}ms ease-out`,
-            }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/hero-pusher-preview.webp"
-              alt=""
-              width={300}
-              height={238}
-              className="block h-auto w-full"
-            />
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/hero-pusher-preview.webp"
+                alt=""
+                width={300}
+                height={238}
+                className="block h-auto w-full"
+              />
+            </div>
           </div>
         </div>
 
@@ -338,29 +339,23 @@ export function ResultAnimation({
         </div>
       </div>
 
-      {/* Final panel — fades in after the confetti burst clears. Same horizontal
-          rhythm as the animation panel, so the swap feels in-place. */}
+      {/* Final panel — fades in after the confetti burst clears. Stacks in the
+          same grid cell as the animation panel, so opacity crossfades cleanly
+          without nudging anything up or down. */}
       <div
-        className={`flex w-full flex-col items-center gap-5 transition-opacity duration-500 ease-out ${
-          finalView
-            ? "translate-y-0 opacity-100"
-            : "pointer-events-none translate-y-3 opacity-0"
+        className={`col-start-1 row-start-1 flex w-full flex-col items-center gap-5 transition-opacity duration-1000 ease-out ${
+          finalView ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
-        style={{
-          transitionProperty: "opacity, transform",
-        }}
       >
-        {finalView && (
-          <div className="w-full max-w-md">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/final_screen.webp"
-              alt=""
-              decoding="async"
-              className="block h-auto w-full"
-            />
-          </div>
-        )}
+        <div className="w-full max-w-md">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/final_screen.webp"
+            alt=""
+            decoding="async"
+            className="block h-auto w-full"
+          />
+        </div>
 
         <p
           className={`max-w-lg px-2 text-center font-display text-xl font-bold italic leading-snug tracking-tight sm:text-2xl ${
@@ -474,6 +469,7 @@ export function ResultAnimation({
               Play again
             </button>
           )}
+      </div>
       </div>
     </section>
   );

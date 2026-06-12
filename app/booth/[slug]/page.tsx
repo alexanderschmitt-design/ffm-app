@@ -1,14 +1,22 @@
 import Image from "next/image";
 import Link from "next/link";
-import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { SiteHeader, titleForBoothSlug } from "@/app/site-header";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { qrDataUrl } from "@/lib/qr";
+import { siteBaseUrl } from "@/lib/site-url";
 import type { Booth } from "@/lib/types";
 import type { ReactNode } from "react";
 
 export const revalidate = 60;
+
+// Prerender both booth slugs (gpc, tax) at build time; new slugs added via
+// the admin would still be rendered on-demand and ISR-cached for 60s.
+export async function generateStaticParams() {
+  const sb = supabaseAdmin();
+  const { data } = await sb.from("booths").select("slug");
+  return (data ?? []).map((b) => ({ slug: b.slug as string }));
+}
 
 type BoothCopy = {
   kicker: string;
@@ -109,13 +117,9 @@ export default async function BoothLandingPage(
   const target = await getBoothAndGame(slug);
   if (!target) notFound();
 
-  const h = await headers();
-  const host = h.get("host") ?? "localhost:3000";
-  const proto = (h.get("x-forwarded-proto") ?? "http").split(",")[0];
-  const baseUrl = `${proto}://${host}`;
-
   // Static, poster-safe URL: stays valid across new games so printed QR
   // codes never expire. /start/<slug> resolves to the current live game.
+  const baseUrl = await siteBaseUrl();
   const playUrl = `${baseUrl}/start/${target.booth.slug}`;
   const qr = await qrDataUrl(playUrl);
 
@@ -141,6 +145,8 @@ export default async function BoothLandingPage(
                 <img
                   src="/work/Plakat.SVG"
                   alt="Product Configuration Solutions poster"
+                  decoding="async"
+                  fetchPriority="high"
                   className="absolute left-0 top-0 block w-full"
                   style={{
                     aspectRatio: "1000 / 1414",

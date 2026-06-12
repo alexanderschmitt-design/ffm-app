@@ -8,6 +8,9 @@ import { supabaseAdmin } from "@/lib/supabase/server";
 // one as fallback), and never see the dynamic /quiz/<uuid> URL.
 
 export const dynamic = "force-dynamic";
+// QR scanners hit this redirect on every visit, so it lives on the Vercel
+// Edge Runtime — sub-50ms cold start instead of ~300ms Node lambda.
+export const runtime = "edge";
 
 export default async function StartPage(props: PageProps<"/start/[slug]">) {
   const { slug } = await props.params;

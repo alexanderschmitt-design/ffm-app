@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
-import { GuentnerLogo } from "@/app/brand";
+import { SiteHeader, titleForBoothSlug } from "@/app/site-header";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { qrDataUrl } from "@/lib/qr";
 import type { Booth } from "@/lib/types";
@@ -131,129 +131,39 @@ export default async function BoothLandingPage(
 
   return (
     <>
-      <header className="border-b border-surface-muted bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-8 py-5">
-          <GuentnerLogo />
-        </div>
-      </header>
+      <SiteHeader title={titleForBoothSlug(target.booth.slug)} />
 
       <main className="flex flex-1 flex-col">
         <section
           className={`bg-white pt-0 pb-20 ${
-            copy.variant === "gpc-cards" ? "px-8" : "px-0"
+            copy.variant === "gpc-cards" ? "px-0" : "px-0"
           }`}
         >
           {copy.variant === "gpc-cards" ? (
-            <div className="mx-auto flex max-w-6xl flex-col items-center gap-6">
-              <div className="relative w-full">
-                <Image
-                  src="/pcs-header.svg"
-                  alt="Product Configuration Solutions — Güntner Group"
-                  width={1000}
-                  height={150}
-                  className="h-auto w-full"
-                  priority
-                />
-              </div>
-
+            <div className="flex flex-col items-center">
               <div
-                className="rounded-full px-6 py-2 font-display text-xs uppercase tracking-[0.2em] text-white sm:text-sm"
-                style={{ backgroundColor: "#F2701D" }}
+                className="relative w-full overflow-hidden bg-white"
+                style={{ aspectRatio: "1000 / 1264" }}
               >
-                Operations — Deliverables
-              </div>
-
-              <div className="relative w-full">
-                <Image
-                  src="/2_row.png"
-                  alt="GPC Operations — CAD Configuration, Production Configuration, Sales Configuration"
-                  width={1920}
-                  height={500}
-                  className="h-auto w-full"
-                  priority
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/work/Plakat.SVG"
+                  alt="Product Configuration Solutions poster"
+                  className="absolute left-0 top-0 block w-full"
+                  style={{
+                    aspectRatio: "1000 / 1414",
+                    transform: "translateY(-10.6082%)",
+                  }}
                 />
               </div>
-
-              <div className="relative w-[80%]">
-                <Image
-                  src="/Lego_Bridge.png"
-                  alt=""
-                  width={1920}
-                  height={400}
-                  className="h-auto w-full"
-                />
-              </div>
-
-              <div className="relative w-full">
-                <Image
-                  src="/1_row.png"
-                  alt="GPC Engineering — CAD Design, Articles / Items, Product Knowledge and Rules"
-                  width={1920}
-                  height={500}
-                  className="h-auto w-full"
-                />
-              </div>
-
-              <div className="rounded-full bg-brand px-6 py-2 font-display text-xs uppercase tracking-[0.2em] text-white sm:text-sm">
-                Engineering — Pillars
-              </div>
-
-              <h2 className="mt-4 text-center font-display text-3xl font-bold italic tracking-tight text-brand-dark sm:text-5xl">
-                PLAY THE GAME!
-              </h2>
-
-              <div className="border border-slate-200 bg-white p-3 shadow-sm">
-                <Image
-                  src={qr}
-                  alt="QR code to play"
-                  width={240}
-                  height={240}
-                  unoptimized
-                  priority
-                />
-              </div>
-
-              {playUrl && (
-                <a
-                  href={playUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="break-all px-4 text-center font-mono text-[11px] text-ink-muted underline-offset-4 hover:text-brand hover:underline"
-                >
-                  {playUrl}
-                </a>
-              )}
-
-              <div className="mt-8 flex w-full flex-wrap items-center justify-center gap-x-8 gap-y-3 border-t border-slate-200 pt-6 text-sm text-ink">
-                <div className="flex items-center gap-2">
-                  <span
-                    className="block h-4 w-4"
-                    style={{ backgroundColor: "#7A7A7A" }}
-                  />
-                  <span>Spark Radiance Software</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span
-                    className="block h-4 w-4"
-                    style={{ backgroundColor: "#E03A3E" }}
-                  />
-                  <span>Infor LN</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span
-                    className="block h-4 w-4"
-                    style={{ backgroundColor: "#1A2D7E" }}
-                  />
-                  <span>CONTACT PDM-System</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span
-                    className="block h-4 w-4"
-                    style={{ backgroundColor: "#1ABC9C" }}
-                  />
-                  <span>Siemens CAD</span>
-                </div>
-              </div>
+              <a
+                href={playUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 break-all px-4 text-center font-mono text-[11px] text-ink-muted underline-offset-4 hover:text-brand hover:underline sm:text-xs"
+              >
+                {playUrl}
+              </a>
             </div>
           ) : (
             <div className="flex w-full flex-col items-center gap-8 px-4">

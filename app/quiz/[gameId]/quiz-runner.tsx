@@ -1,23 +1,27 @@
 "use client";
 
 import { useState } from "react";
+import {
+  ResultAnimation,
+  type ResultAnswer,
+} from "@/app/quiz/test-result/result-animation";
 
 type Option = { id: string; label: string; position: number; is_correct: boolean };
-type Q = { id: string; prompt: string; options: Option[] };
+type Q = {
+  id: string;
+  prompt: string;
+  category?: string | null;
+  options: Option[];
+};
 
 export type QuizBonus = {
-  teaserSrc: string;
-  teaserAlt: string;
-  headline: string;
-  body: string;
-  downloadHref: string;
-  downloadLabel: string;
-  downloadFilename: string;
+  downloads: Array<{ href: string; filename: string; label: string }>;
 };
 
 type Answer = {
   questionId: string;
   prompt: string;
+  category?: string | null;
   picked: Option;
   correct: Option;
   isCorrect: boolean;
@@ -45,37 +49,32 @@ export function QuizRunner({
 
   if (index >= questions.length) {
     const correctCount = answers.filter((a) => a.isCorrect).length;
+
+    if (bonus) {
+      const resultAnswers: ResultAnswer[] = answers.map((a) => ({
+        category: a.category,
+        prompt: a.prompt,
+        pickedLabel: a.picked.label,
+        correctLabel: a.correct.label,
+        isCorrect: a.isCorrect,
+      }));
+      return (
+        <ResultAnimation
+          correct={correctCount}
+          total={answers.length}
+          quizAnswers={resultAnswers}
+          bonus={{ downloads: bonus.downloads }}
+          onPlayAgain={() => {
+            setIndex(0);
+            setAnswers([]);
+            setError(null);
+          }}
+        />
+      );
+    }
+
     return (
       <section className="mt-2 flex flex-1 flex-col gap-5" aria-live="polite">
-        {bonus && (
-          <section className="overflow-hidden border border-slate-200 bg-white">
-            <div className="px-5 pt-5 text-center">
-              <h2 className="font-display text-2xl font-bold italic tracking-tight text-brand-dark sm:text-4xl">
-                FROM <span className="text-brand">ZERO</span> TO{" "}
-                <span style={{ color: "#F2701D" }}>HERO</span>
-              </h2>
-              <h3 className="mt-2 font-display text-lg font-bold italic tracking-tight text-brand sm:text-2xl">
-                PLAY THE GAME!
-              </h3>
-            </div>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={bonus.teaserSrc}
-              alt={bonus.teaserAlt}
-              className="mt-4 block h-auto w-full"
-            />
-            <div className="flex justify-center p-5">
-              <a
-                href={bonus.downloadHref}
-                download={bonus.downloadFilename}
-                className="inline-flex items-center gap-2 bg-brand px-5 py-3 text-sm font-medium text-white transition hover:bg-brand-dark"
-              >
-                {bonus.downloadLabel} ↓
-              </a>
-            </div>
-          </section>
-        )}
-
         <div className="flex flex-col items-center bg-surface-muted p-6 text-center">
           <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
             Your result
@@ -154,6 +153,7 @@ export function QuizRunner({
       const answer: Answer = {
         questionId: q.id,
         prompt: q.prompt,
+        category: q.category ?? null,
         picked: option,
         correct,
         isCorrect: option.id === correct.id,
@@ -171,7 +171,15 @@ export function QuizRunner({
   return (
     <section className="mt-2 flex flex-1 flex-col gap-4">
       <div className="font-display text-[10px] uppercase tracking-[0.2em] text-ink-muted">
-        Question {index + 1} / {questions.length}
+        <span>
+          Question {index + 1} / {questions.length}
+        </span>
+        {q.category && (
+          <>
+            <span aria-hidden> · </span>
+            <span className="text-brand">{q.category}</span>
+          </>
+        )}
       </div>
       <h2 className="text-2xl font-semibold leading-tight sm:text-3xl">
         {q.prompt}

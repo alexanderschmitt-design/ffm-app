@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase/server";
-import { GuentnerMark } from "@/app/brand";
+import { SiteHeader, titleForBoothSlug } from "@/app/site-header";
 import { AnswerButtons } from "./answer-buttons";
 
 type Option = {
@@ -27,19 +27,34 @@ export default async function PlayPage(props: PageProps<"/play/[slug]">) {
 
   const options = (row.options_json ?? []).sort((a, b) => a.position - b.position);
 
+  const { data: game } = await sb
+    .from("games")
+    .select("booth_id")
+    .eq("id", row.game_id)
+    .maybeSingle();
+  const { data: booth } = game?.booth_id
+    ? await sb
+        .from("booths")
+        .select("slug")
+        .eq("id", game.booth_id)
+        .maybeSingle()
+    : { data: null };
+
   return (
-    <main className="flex min-h-dvh flex-col items-stretch bg-white p-5 text-ink">
-      <header className="mb-5 border-b border-slate-200 pb-4">
-        <GuentnerMark className="h-10 w-auto" />
-        <h1 className="mt-3 text-2xl font-semibold leading-tight sm:text-3xl">
-          {row.prompt}
-        </h1>
-        <span className="headline-accent mt-3" />
-      </header>
-      <AnswerButtons questionId={row.question_id} options={options} />
-      <footer className="mt-6 text-center text-xs text-ink-muted">
-        Tap an answer &mdash; the reveal happens on the booth screen.
-      </footer>
+    <main className="flex min-h-dvh flex-col items-stretch bg-white text-ink">
+      <SiteHeader title={titleForBoothSlug(booth?.slug)} />
+      <div className="flex flex-1 flex-col p-5">
+        <div className="mb-5 border-b border-slate-200 pb-4">
+          <h1 className="text-2xl font-semibold leading-tight sm:text-3xl">
+            {row.prompt}
+          </h1>
+          <span className="headline-accent mt-3" />
+        </div>
+        <AnswerButtons questionId={row.question_id} options={options} />
+        <footer className="mt-6 text-center text-xs text-ink-muted">
+          Tap an answer &mdash; the reveal happens on the booth screen.
+        </footer>
+      </div>
     </main>
   );
 }

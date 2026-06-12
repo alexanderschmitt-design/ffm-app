@@ -43,10 +43,17 @@ export default async function PresentPage(props: PageProps<"/present/[gameId]">)
     })),
   );
 
+  const { data: booth } = await sb
+    .from("booths")
+    .select("slug")
+    .eq("id", (game as Game).booth_id)
+    .maybeSingle();
+
   return (
     <PresentClient
       game={game as Game}
       questions={questionsWithQr}
+      boothSlug={booth?.slug}
     />
   );
 }

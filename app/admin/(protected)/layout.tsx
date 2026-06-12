@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { adminBoothSlug } from "@/lib/auth";
-import { GuentnerLogo } from "@/app/brand";
+import { SiteHeader } from "@/app/site-header";
 import { supabaseAdmin } from "@/lib/supabase/server";
 
 export default async function AdminProtectedLayout({
@@ -23,16 +23,21 @@ export default async function AdminProtectedLayout({
 
   return (
     <div className="min-h-dvh bg-surface-muted text-ink">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-8 py-5">
-          <GuentnerLogo subline={`Admin · ${booth.name}`} />
-          <form action="/api/admin/logout" method="post">
-            <button className="font-display text-xs uppercase tracking-[0.18em] text-ink-muted hover:text-brand">
-              Abmelden
-            </button>
-          </form>
-        </div>
-      </header>
+      <SiteHeader
+        title="Admin"
+        action={
+          <>
+            <span className="font-display text-xs uppercase tracking-[0.18em] text-ink-muted">
+              {booth.name}
+            </span>
+            <form action="/api/admin/logout" method="post">
+              <button className="font-display text-xs uppercase tracking-[0.18em] text-ink-muted hover:text-brand">
+                Abmelden
+              </button>
+            </form>
+          </>
+        }
+      />
       <main className="mx-auto max-w-6xl px-8 py-10">{children}</main>
     </div>
   );

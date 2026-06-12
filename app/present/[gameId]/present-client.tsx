@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { GuentnerMark } from "@/app/brand";
+import { SiteHeader, titleForBoothSlug } from "@/app/site-header";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import type { Game, AnswerOption } from "@/lib/types";
 
@@ -20,9 +20,10 @@ type PresentationQuestion = {
 type Props = {
   game: Game;
   questions: PresentationQuestion[];
+  boothSlug?: string | null;
 };
 
-export function PresentClient({ game, questions }: Props) {
+export function PresentClient({ game, questions, boothSlug }: Props) {
   const [index, setIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [counts, setCounts] = useState<Record<string, number>>({});
@@ -132,18 +133,19 @@ export function PresentClient({ game, questions }: Props) {
 
   return (
     <main className="flex min-h-dvh flex-col bg-white text-ink">
-      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-12 py-5">
-        <div className="flex items-center gap-5">
-          <GuentnerMark className="h-14 w-auto" />
-          <span aria-hidden className="h-9 w-px bg-slate-300" />
-          <span className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-            {game.name}
-          </span>
-        </div>
-        <div className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-          Question {index + 1} / {questions.length}
-        </div>
-      </header>
+      <SiteHeader
+        title={titleForBoothSlug(boothSlug)}
+        action={
+          <div className="flex w-full items-center justify-between">
+            <span className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
+              {game.name}
+            </span>
+            <span className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
+              Question {index + 1} / {questions.length}
+            </span>
+          </div>
+        }
+      />
 
       <div className="grid flex-1 grid-cols-[1fr_360px] gap-12 px-12 py-10">
         <section className="flex flex-col gap-8">

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { isAdmin, loginWithPassword } from "@/lib/auth";
-import { GuentnerLogo } from "@/app/brand";
+import { SiteHeader } from "@/app/site-header";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import type { Booth } from "@/lib/types";
 
@@ -34,11 +34,7 @@ export default async function LoginPage(props: PageProps<"/admin/login">) {
 
   return (
     <main className="flex min-h-dvh flex-col bg-surface-muted">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-8 py-5">
-          <GuentnerLogo subline="FMM 2026 · Booth Quiz" />
-        </div>
-      </header>
+      <SiteHeader title="Admin" />
       <div className="flex flex-1 items-center justify-center p-6">
         <form
           action={loginAction}

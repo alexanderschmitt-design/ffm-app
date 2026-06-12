@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { GuentnerLogo } from "./brand";
+import { SiteHeader } from "./site-header";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import type { Booth } from "@/lib/types";
 
@@ -15,11 +15,7 @@ export default async function Home() {
 
   return (
     <>
-      <header className="border-b border-surface-muted bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-8 py-5">
-          <GuentnerLogo />
-        </div>
-      </header>
+      <SiteHeader title="Güntner Company Market" />
 
       <main className="flex flex-1 flex-col">
         <section className="bg-white px-8 py-20">

@@ -37,6 +37,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# claude code local session state
+.claude/
+
 # dev-server runtime log (local-only)
 dev.log
 

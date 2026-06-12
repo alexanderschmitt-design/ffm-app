@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase/server";
-import { GuentnerMark } from "@/app/brand";
+import { SiteHeader, titleForBoothSlug } from "@/app/site-header";
 import { QuizRunner, type QuizBonus } from "./quiz-runner";
 import type { Question, AnswerOption } from "@/lib/types";
 import { GPC_CATEGORIES } from "@/lib/gpc-categories";
@@ -10,13 +10,13 @@ export const dynamic = "force-dynamic";
 // Per-booth bonus shown on the quiz summary screen.
 const BOOTH_BONUSES: Record<string, QuizBonus> = {
   gpc: {
-    teaserSrc: "/lego-bauanleitung-teaser.png",
-    teaserAlt: "Lego figures building a Güntner unit",
-    headline: "You are a hero — enjoy building a Güntner Unit",
-    body: "",
-    downloadHref: "/lego-guentner-plan.pdf",
-    downloadLabel: "Download Plan (PDF)",
-    downloadFilename: "guentner-bauanleitung.pdf",
+    downloads: [
+      {
+        href: "/Guentner_building_instructions.pdf",
+        filename: "Guentner_building_instructions.pdf",
+        label: "Download Building Plan",
+      },
+    ],
   },
 };
 
@@ -50,10 +50,13 @@ export default async function QuizPage(props: PageProps<"/quiz/[gameId]">) {
   // GPC booth: show exactly one question per category in fixed order.
   // If multiple questions exist for a category, pick one at random.
   // Categories without a tagged question are silently skipped.
+  // Math.random is intentional here — this is a force-dynamic server component
+  // that runs once per request; players should see a fresh draw each time.
   if (booth?.slug === "gpc") {
     qs = GPC_CATEGORIES.flatMap((cat) => {
       const pool = qs.filter((q) => q.category === cat);
       if (pool.length === 0) return [];
+      // eslint-disable-next-line react-hooks/purity
       return [pool[Math.floor(Math.random() * pool.length)]];
     });
   }
@@ -72,6 +75,7 @@ export default async function QuizPage(props: PageProps<"/quiz/[gameId]">) {
   const payload = qs.map((q) => ({
     id: q.id,
     prompt: q.prompt,
+    category: q.category,
     options: options
       .filter((o) => o.question_id === q.id)
       .map((o) => ({
@@ -85,11 +89,11 @@ export default async function QuizPage(props: PageProps<"/quiz/[gameId]">) {
   const bonus = booth?.slug ? BOOTH_BONUSES[booth.slug] : undefined;
 
   return (
-    <main className="flex min-h-dvh flex-col items-stretch bg-white p-5 text-ink">
-      <header className="mb-5 border-b border-slate-200 pb-4">
-        <GuentnerMark className="h-10 w-auto" />
-      </header>
-      <QuizRunner questions={payload} bonus={bonus} />
+    <main className="flex min-h-dvh flex-col items-stretch bg-white text-ink">
+      <SiteHeader title={titleForBoothSlug(booth?.slug)} />
+      <div className="flex flex-1 flex-col p-5">
+        <QuizRunner questions={payload} bonus={bonus} />
+      </div>
     </main>
   );
 }

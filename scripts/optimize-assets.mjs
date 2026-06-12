@@ -87,4 +87,5 @@ await minifySvg("work/Plakat.SVG");
 await pngToWebp("myGPC-Home.png");
 await pngToWebp("lego-bauanleitung-teaser.png");
 await pngToWebp("Lego_Bridge.png");
+await pngToWebp("final_screen.png");
 await gifToWebp("hero-pusher-preview.gif");

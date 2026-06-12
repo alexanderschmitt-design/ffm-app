@@ -23,9 +23,10 @@ const FALLBACK_DOWNLOADS = [
 ];
 
 const BAR_DURATION_MS = 1600;
-const REVEAL_DELAY_MS = 1900;
 const CONFETTI_START_MS = 1700;
 const CONFETTI_LIFE_MS = 2200;
+// Final view fades in right after the confetti burst clears.
+const FINAL_VIEW_DELAY_MS = CONFETTI_START_MS + CONFETTI_LIFE_MS - 200;
 const PASS_THRESHOLD = 4;
 
 const CONFETTI_COLORS = [
@@ -89,7 +90,7 @@ export function ResultAnimation({
   const target = effectiveTotal > 0 ? (effectiveCorrect / effectiveTotal) * 100 : 0;
   const [progress, setProgress] = useState(0);
   const [count, setCount] = useState(0);
-  const [revealed, setRevealed] = useState(false);
+  const [finalView, setFinalView] = useState(false);
 
   useEffect(() => {
     const raf = requestAnimationFrame(() => {
@@ -112,7 +113,7 @@ export function ResultAnimation({
   }, [effectiveCorrect]);
 
   useEffect(() => {
-    const id = setTimeout(() => setRevealed(true), REVEAL_DELAY_MS);
+    const id = setTimeout(() => setFinalView(true), FINAL_VIEW_DELAY_MS);
     return () => clearTimeout(id);
   }, []);
 
@@ -273,61 +274,75 @@ export function ResultAnimation({
         </div>
       )}
 
-      <h1 className="text-center font-display text-3xl font-bold italic leading-tight tracking-tight text-ink sm:text-5xl">
-        <span className="hero-line-1 block">Congrats !!!</span>
-        <span className="hero-line-2 mt-2 block">
-          From <span style={{ color: "#2666e1" }}>Zero</span> to{" "}
-          <span style={{ color: "#F2701D" }}>
-            <span className="hero-bobble">HERO</span>
+      {/* Animation panel — headline + bar + score. Collapses (height 0 +
+          opacity 0) once finalView triggers, so the final panel can take
+          over the same screen real estate without layout shift hanging
+          around. */}
+      <div
+        className={`flex w-full flex-col items-center gap-6 overflow-hidden transition-all duration-500 ease-out ${
+          finalView
+            ? "pointer-events-none max-h-0 opacity-0"
+            : "max-h-[800px] opacity-100"
+        }`}
+      >
+        <h1 className="text-center font-display text-3xl font-bold italic leading-tight tracking-tight text-ink sm:text-5xl">
+          <span className="hero-line-1 block">Congrats !!!</span>
+          <span className="hero-line-2 mt-2 block">
+            From <span style={{ color: "#2666e1" }}>Zero</span> to{" "}
+            <span style={{ color: "#F2701D" }}>
+              <span className="hero-bobble">HERO</span>
+            </span>
           </span>
-        </span>
-      </h1>
+        </h1>
 
-      <div className="relative h-24 w-full">
-        <div className="absolute inset-x-0 bottom-0 h-3 overflow-hidden rounded-full bg-surface-muted">
+        <div className="relative h-24 w-full">
+          <div className="absolute inset-x-0 bottom-0 h-3 overflow-hidden rounded-full bg-surface-muted">
+            <div
+              className="h-full rounded-full bg-brand"
+              style={{
+                width: `${progress}%`,
+                transition: `width ${BAR_DURATION_MS}ms ease-out`,
+              }}
+            />
+          </div>
           <div
-            className="h-full rounded-full bg-brand"
+            ref={legoRef}
+            className="absolute bottom-3"
             style={{
-              width: `${progress}%`,
-              transition: `width ${BAR_DURATION_MS}ms ease-out`,
+              left: `${progress}%`,
+              width: "120px",
+              transform: "translateX(-50%)",
+              transition: `left ${BAR_DURATION_MS}ms ease-out`,
             }}
-          />
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/hero-pusher-preview.webp"
+              alt=""
+              width={300}
+              height={238}
+              className="block h-auto w-full"
+            />
+          </div>
         </div>
-        <div
-          ref={legoRef}
-          className="absolute bottom-3"
-          style={{
-            left: `${progress}%`,
-            width: "120px",
-            transform: "translateX(-50%)",
-            transition: `left ${BAR_DURATION_MS}ms ease-out`,
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/hero-pusher-preview.webp"
-            alt=""
-            width={300}
-            height={238}
-            className="block h-auto w-full"
-          />
+
+        <div className="flex flex-col items-center">
+          <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
+            Your result
+          </p>
+          <p className="mt-2 text-6xl font-semibold text-brand">
+            {count}{" "}
+            <span className="text-2xl text-ink-muted">/ {effectiveTotal}</span>
+          </p>
+          <p className="mt-1 text-sm text-ink-muted">correct</p>
         </div>
       </div>
 
-      <div className="flex flex-col items-center">
-        <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-muted">
-          Your result
-        </p>
-        <p className="mt-2 text-6xl font-semibold text-brand">
-          {count}{" "}
-          <span className="text-2xl text-ink-muted">/ {effectiveTotal}</span>
-        </p>
-        <p className="mt-1 text-sm text-ink-muted">correct</p>
-      </div>
-
+      {/* Final panel — fades in after the confetti burst clears. Same horizontal
+          rhythm as the animation panel, so the swap feels in-place. */}
       <div
         className={`flex w-full flex-col items-center gap-5 transition-opacity duration-500 ease-out ${
-          revealed
+          finalView
             ? "translate-y-0 opacity-100"
             : "pointer-events-none translate-y-3 opacity-0"
         }`}
@@ -335,6 +350,18 @@ export function ResultAnimation({
           transitionProperty: "opacity, transform",
         }}
       >
+        {finalView && (
+          <div className="w-full max-w-md">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/final_screen.webp"
+              alt=""
+              decoding="async"
+              className="block h-auto w-full"
+            />
+          </div>
+        )}
+
         <p
           className={`max-w-lg px-2 text-center font-display text-xl font-bold italic leading-snug tracking-tight sm:text-2xl ${
             passed ? "text-ink" : "text-rose-600"
@@ -352,7 +379,7 @@ export function ResultAnimation({
                 download={d.filename}
                 className="inline-flex items-center gap-2 bg-brand px-5 py-3 text-sm font-medium text-white transition hover:bg-brand-dark"
               >
-                {d.label} ↓
+                Download LEGO Plan ↓
               </a>
             ))}
           </div>

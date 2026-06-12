@@ -22,7 +22,7 @@ export default async function QuizTestResultPage({
   return (
     <main className="flex min-h-dvh flex-col bg-white text-ink">
       <SiteHeader title="Product Configuration Solutions" />
-      <div className="flex flex-1 flex-col p-5">
+      <div className="flex flex-1 flex-col px-5">
         <ResultAnimation correct={correct} total={TOTAL} />
       </div>
     </main>

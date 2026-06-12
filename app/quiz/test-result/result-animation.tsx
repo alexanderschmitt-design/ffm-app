@@ -200,7 +200,7 @@ export function ResultAnimation({
       }));
 
   return (
-    <section className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center gap-6 px-2 py-8">
+    <section className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center gap-6 px-2 pb-8">
       <style>{`
         @keyframes hero-rise {
           0%   { opacity: 0; }

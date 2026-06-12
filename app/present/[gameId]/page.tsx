@@ -11,8 +11,14 @@ export default async function PresentPage(props: PageProps<"/present/[gameId]">)
   const { gameId } = await props.params;
   const sb = supabaseAdmin();
 
+  // Booth slug is joined into the games query so we don't pay a second
+  // sequential roundtrip just to render the SiteHeader title.
   const [{ data: game }, { data: questions }] = await Promise.all([
-    sb.from("games").select("*").eq("id", gameId).maybeSingle(),
+    sb
+      .from("games")
+      .select("*, booths(slug)")
+      .eq("id", gameId)
+      .maybeSingle(),
     sb.from("questions").select("*").eq("game_id", gameId).order("position", { ascending: true }),
   ]);
   if (!game) notFound();
@@ -43,17 +49,14 @@ export default async function PresentPage(props: PageProps<"/present/[gameId]">)
     })),
   );
 
-  const { data: booth } = await sb
-    .from("booths")
-    .select("slug")
-    .eq("id", (game as Game).booth_id)
-    .maybeSingle();
+  const boothJoin = (game as unknown as { booths: { slug: string } | null })
+    .booths;
 
   return (
     <PresentClient
       game={game as Game}
       questions={questionsWithQr}
-      boothSlug={booth?.slug}
+      boothSlug={boothJoin?.slug ?? null}
     />
   );
 }

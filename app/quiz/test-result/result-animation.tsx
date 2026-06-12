@@ -305,7 +305,7 @@ export function ResultAnimation({
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/hero-pusher-preview.gif"
+            src="/hero-pusher-preview.webp"
             alt=""
             width={300}
             height={238}

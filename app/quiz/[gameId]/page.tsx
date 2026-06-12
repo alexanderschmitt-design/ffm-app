@@ -24,10 +24,13 @@ export default async function QuizPage(props: PageProps<"/quiz/[gameId]">) {
   const { gameId } = await props.params;
   const sb = supabaseAdmin();
 
+  // Folds the previously sequential booth lookup into the same query as
+  // the game row via a Supabase nested select. Saves one Supabase roundtrip
+  // per quiz pageview.
   const [{ data: game }, { data: questions }] = await Promise.all([
     sb
       .from("games")
-      .select("id, name, status, booth_id")
+      .select("id, name, status, booth_id, booths(slug)")
       .eq("id", gameId)
       .maybeSingle(),
     sb
@@ -39,11 +42,11 @@ export default async function QuizPage(props: PageProps<"/quiz/[gameId]">) {
 
   if (!game) notFound();
 
-  const { data: booth } = await sb
-    .from("booths")
-    .select("slug")
-    .eq("id", game.booth_id)
-    .maybeSingle();
+  // Supabase returns the FK-joined `booths` as a single object at runtime
+  // (many-to-one), but the inferred type is an array — cast through unknown.
+  const boothJoin = (game as unknown as { booths: { slug: string } | null })
+    .booths;
+  const booth = boothJoin ? { slug: boothJoin.slug } : null;
 
   let qs = (questions ?? []) as Question[];
 

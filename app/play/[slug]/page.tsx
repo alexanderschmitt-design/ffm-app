@@ -27,18 +27,16 @@ export default async function PlayPage(props: PageProps<"/play/[slug]">) {
 
   const options = (row.options_json ?? []).sort((a, b) => a.position - b.position);
 
+  // Pull booth slug via a nested select instead of game → booth as two
+  // sequential roundtrips.
   const { data: game } = await sb
     .from("games")
-    .select("booth_id")
+    .select("booth_id, booths(slug)")
     .eq("id", row.game_id)
     .maybeSingle();
-  const { data: booth } = game?.booth_id
-    ? await sb
-        .from("booths")
-        .select("slug")
-        .eq("id", game.booth_id)
-        .maybeSingle()
-    : { data: null };
+  const boothJoin =
+    (game as unknown as { booths: { slug: string } | null } | null)?.booths;
+  const booth = boothJoin ? { slug: boothJoin.slug } : null;
 
   return (
     <main className="flex min-h-dvh flex-col items-stretch bg-white text-ink">

@@ -13,33 +13,21 @@ export default async function StartPage(props: PageProps<"/start/[slug]">) {
   const { slug } = await props.params;
   const sb = supabaseAdmin();
 
-  const { data: booth } = await sb
+  // One nested-select roundtrip replaces booth → live game → newest game.
+  // We fetch all games for the booth in one shot and pick live/latest in JS.
+  const { data: row } = await sb
     .from("booths")
-    .select("id")
+    .select("id, games(id, status, created_at)")
     .eq("slug", slug)
     .maybeSingle();
-  if (!booth) notFound();
+  if (!row) notFound();
 
-  const { data: live } = await sb
-    .from("games")
-    .select("id")
-    .eq("booth_id", booth.id)
-    .eq("status", "live")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  let gameId = live?.id as string | undefined;
-  if (!gameId) {
-    const { data: newest } = await sb
-      .from("games")
-      .select("id")
-      .eq("booth_id", booth.id)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    gameId = newest?.id as string | undefined;
-  }
+  type GameRow = { id: string; status: string; created_at: string };
+  const games = ((row as { games: GameRow[] | null }).games ?? [])
+    .slice()
+    .sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+  const live = games.find((g) => g.status === "live");
+  const gameId = (live ?? games[0])?.id;
 
   if (!gameId) {
     // No game exists yet — fall back to the booth landing page so the

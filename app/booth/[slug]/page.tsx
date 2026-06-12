@@ -8,7 +8,7 @@ import { qrDataUrl } from "@/lib/qr";
 import type { Booth } from "@/lib/types";
 import type { ReactNode } from "react";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 type BoothCopy = {
   kicker: string;
@@ -58,7 +58,7 @@ const BOOTH_COPY: Record<string, BoothCopy> = {
       </>
     ),
     image: {
-      src: "/myGPC-Home.png",
+      src: "/myGPC-Home.webp",
       alt: "myGPC product configurator home screen",
       aspectClass: "aspect-[16/10]",
     },
@@ -69,45 +69,37 @@ const BOOTH_COPY: Record<string, BoothCopy> = {
 async function getBoothAndGame(slug: string) {
   const sb = supabaseAdmin();
 
-  const { data: booth } = await sb
+  // Single nested select replaces the previous 3–4 sequential roundtrips:
+  // booth → games (live, with fallback) → questions count. Supabase returns
+  // the booth row with its games array; the live/latest pick happens in JS.
+  type GameRow = {
+    id: string;
+    name: string;
+    status: string;
+    created_at: string;
+    questions: { id: string }[] | null;
+  };
+  const { data: row } = await sb
     .from("booths")
-    .select("*")
+    .select("*, games(id, name, status, created_at, questions(id))")
     .eq("slug", slug)
     .maybeSingle();
 
-  if (!booth) return null;
+  if (!row) return null;
 
-  const { data: live } = await sb
-    .from("games")
-    .select("id, name, status")
-    .eq("booth_id", booth.id)
-    .eq("status", "live")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  const { games, ...boothFields } = row as Booth & { games: GameRow[] | null };
+  const booth = boothFields as Booth;
+  const sorted = (games ?? []).slice().sort((a, b) =>
+    a.created_at < b.created_at ? 1 : -1,
+  );
+  const live = sorted.find((g) => g.status === "live");
+  const picked = live ?? sorted[0] ?? null;
+  const game = picked
+    ? { id: picked.id, name: picked.name, status: picked.status }
+    : null;
+  const hasQuestions = picked ? (picked.questions?.length ?? 0) > 0 : false;
 
-  const game =
-    live ??
-    (
-      await sb
-        .from("games")
-        .select("id, name, status")
-        .eq("booth_id", booth.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle()
-    ).data;
-
-  let hasQuestions = false;
-  if (game) {
-    const { count } = await sb
-      .from("questions")
-      .select("id", { count: "exact", head: true })
-      .eq("game_id", game.id);
-    hasQuestions = (count ?? 0) > 0;
-  }
-
-  return { booth: booth as Booth, game, hasQuestions };
+  return { booth, game, hasQuestions };
 }
 
 export default async function BoothLandingPage(

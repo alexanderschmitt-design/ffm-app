@@ -1,8 +1,6 @@
 import { SiteHeader } from "@/app/site-header";
 import { ResultAnimation } from "./result-animation";
 
-export const dynamic = "force-dynamic";
-
 const TOTAL = 6;
 
 function parseCorrect(raw: string | string[] | undefined): number {

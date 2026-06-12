@@ -3,7 +3,7 @@ import { SiteHeader } from "./site-header";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import type { Booth } from "@/lib/types";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 120;
 
 export default async function Home() {
   const sb = supabaseAdmin();
